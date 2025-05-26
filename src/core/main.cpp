@@ -27,8 +27,12 @@ int main() {
     Input::Create();
     Input* _input = Input::GetInstancePtr();
 
+    Time::Create();
+    Time* _time = Time::GetInstancePtr();
+
     _renderer->Init();
     _input->Init();
+    _time->Init();
 
     // Initialize main components
     Camera* currentCamera = new Camera();
@@ -150,6 +154,7 @@ int main() {
     {
         _renderer->Update();
         _input->Update();
+        _time->Update();
 
         if (Input::IsKeyPressed(GLFW_KEY_ESCAPE) ||
             Renderer::ShouldClose()){ _applicationRunning = false;}
@@ -161,9 +166,10 @@ int main() {
     delete lightTransform;
     delete currentCamera;
 
+    _time->Close();
     _input->Close();
     _renderer->Close();
-    
+
     return 0;
 }
 
