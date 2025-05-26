@@ -140,6 +140,7 @@ void UIManager::Update()
         ImGui::Text("Current Time Scale %f", Time::GetTimeScale());
 
 
+
         DrawHierarchyPanel();
 
         ImGui::End();
@@ -162,227 +163,97 @@ void UIManager::Close()
 
 void UIManager::DrawHierarchyPanel()
 {
-    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_None
-    | ImGuiWindowFlags_NoCollapse
-    | ImGuiWindowFlags_MenuBar;
+   // Display Renderer information
+        ImGui::SeparatorText("Renderer");
 
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Framed |
-                           ImGuiTreeNodeFlags_SpanAvailWidth |
-                           ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Framed;
+        // Get renderer instance
+        Renderer* renderer = Renderer::GetInstancePtr();
 
-    if (_sceneHierarchyOpen && ImGui::Begin("Scene Hierarchy", &_sceneHierarchyOpen, windowFlags))
-    {
+        // Display Directional Light
+        if (ImGui::TreeNode("Directional Light"))
+        {
+            std::shared_ptr<DirectionalLight>& dirLight = renderer->GetDirectionalLight();
 
+            if (dirLight)
+            {
+                // Directional Light direction
+                float direction[3] = {dirLight->GetDirection().x, dirLight->GetDirection().y, dirLight->GetDirection().z};
+                if (ImGui::DragFloat3("Direction", direction, 0.1f)) {
+                    dirLight->SetDirection(glm::vec3(direction[0], direction[1], direction[2]));
+                }
 
-            // Create a tree node for each entity
-            std::string entityName = entity.GetName();
-            if (entityName.empty()) {
-                entityName = "Entity " + std::to_string(entity.GetUID());
+                // Directional Light ambient
+                float ambientDirLight[3] = {dirLight->GetAmbient().x, dirLight->GetAmbient().y, dirLight->GetAmbient().z};
+                if (ImGui::DragFloat3("Ambient", ambientDirLight, 0.01f, 0.0f, 1.0f)) {
+                    dirLight->SetAmbient(glm::vec3(ambientDirLight[0], ambientDirLight[1], ambientDirLight[2]));
+                }
+
+                // Directional Light diffuse
+                float diffuseDirLight[3] = {dirLight->GetDiffuse().x, dirLight->GetDiffuse().y, dirLight->GetDiffuse().z};
+                if (ImGui::DragFloat3("Diffuse", diffuseDirLight, 0.01f, 0.0f, 1.0f)) {
+                    dirLight->SetDiffuse(glm::vec3(diffuseDirLight[0], diffuseDirLight[1], diffuseDirLight[2]));
+                }
+
+                // Directional Light specular
+                float specularDirLight[3] = {dirLight->GetSpecular().x, dirLight->GetSpecular().y, dirLight->GetSpecular().z};
+                if (ImGui::DragFloat3("Specular", specularDirLight, 0.1f, 0.0f, 1.0f)){
+                    dirLight->SetSpecular(glm::vec3(specularDirLight[0], specularDirLight[1], specularDirLight[2]));
+                }
+            }
+            else
+            {
+                ImGui::Text("No directional light in the scene");
             }
 
-            if (ImGui::TreeNodeEx(entityName.c_str(), flags))
+            ImGui::TreePop();
+        }
+
+        // Display Point Lights
+        if (ImGui::TreeNode("Point Lights"))
+        {
+            std::vector<std::shared_ptr<PointLight>>& pointLights = renderer->GetPointLights();
+
+            if (!pointLights.empty())
             {
-                // Display entity UID
-                ImGui::Text("UID: %u", entity.GetUID());
-
-                // Display Transform component if it exists
-                Transform* transform = entity.GetComponent<Transform>();
-                if (transform)
+                for (size_t i = 0; i < pointLights.size(); i++)
                 {
-                    if (ImGui::TreeNode("Transform"))
+                    std::string lightName = "Point Light " + std::to_string(i);
+                    if (ImGui::TreeNode(lightName.c_str()))
                     {
+                        auto& pointLight = pointLights[i];
+                        Transform* transform = pointLight->GetTransform();
 
-                        // POSITION
-                        float position[3] = { transform->position.x, transform->position.y, transform->position.z };
-                        if (ImGui::DragFloat3("Position", position, 0.1f))
+                        // Position (from transform)
+                        if (transform)
                         {
-                            transform->position.x = position[0];
-                            transform->position.y = position[1];
-                            transform->position.z = position[2];
-                        }
-
-                        // ROTATION
-                        float rotation[3] = { transform->rotation.x, transform->rotation.y, transform->rotation.z };
-                        if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
-                        {
-                            transform->rotation.x = rotation[0];
-                            transform->rotation.y = rotation[1];
-                            transform->rotation.z = rotation[2];
-                        }
-
-                        // SCALE
-                        float scale[3] = { transform->scale.x, transform->scale.y, transform->scale.z };
-                        if (ImGui::DragFloat3("Scale", scale, 0.05f)) {
-                            transform->scale.x = scale[0];
-                            transform->scale.y = scale[1];
-                            transform->scale.z = scale[2];
-                        }
-
-                        ImGui::Text("Parent Transform: ");
-                        transform->GetParent() != nullptr ? ImGui::Text("Parent Transform UID: %u", transform->GetParent()->GetOwner()->GetUID()) : ImGui::Text("none");
-
-                        ImGui::TreePop();
-                    }
-                }
-
-                // Display MeshRenderable component if it exists
-                MeshRenderable* meshRenderable = entity.GetComponent<MeshRenderable>();
-                if (meshRenderable)
-                {
-                    if (ImGui::TreeNode("MeshRenderable"))
-                    {
-                        ImGui::Text("Has Material: %s", meshRenderable->GetMaterial() ? "Yes" : "No");
-                        ImGui::Text("Has Mesh: %s", meshRenderable->GetMesh() ? "Yes" : "No");
-                        ImGui::Dummy(ImVec2(0,10));
-
-                        // Mesh Block
-                        if (ImGui::TreeNode("Mesh"))
-                        {
-                            std::shared_ptr<Mesh> mesh = meshRenderable->GetMesh();
-                            if (mesh)
+                            float position[3] = {transform->position.x, transform->position.y, transform->position.z};
+                            if (ImGui::DragFloat3("Position", position, 0.1f))
                             {
-                                ImGui::SeparatorText("Mesh properties");
-                                ImGui::Text("Vertices: %d", mesh->GetNumVertices());
-                                ImGui::Text("Indices: %d", mesh->GetNumIndices());
-                                ImGui::Text("VAO ID: %u" , mesh->GetVertexArray()->GetUid());
-                                ImGui::Text("EBO ID: %u" , mesh->GetVertexArray()->GetIndexBuffer()->GetUid());
-                                std::vector<std::shared_ptr<VertexBuffer>> vbos = mesh->GetVertexArray()->GetVertexBuffers();
-                                ImGui::Text("Vertex Buffers: %u", vbos.size());
-                                unsigned int i = 0;
-                                for (auto vbo : vbos)
-                                {
-                                    ImGui::Text("\t VBO [%u] UID: %u", i, vbo->GetUid());
-                                }
-                                ImGui::Dummy(ImVec2(0,10));
-
-                                ImGui::SeparatorText("Layout Buffer");
-                                ImGui::Text("%s", mesh->GetVertexArray()->GetLayoutBuffer().ToString().c_str());
-                                ImGui::Dummy(ImVec2(0,10));
-
-                                ImGui::TreePop();
-                            }
-                            else
-                            {
-                                ImGui::Text("No mesh");
+                                transform->position.x = position[0];
+                                transform->position.y = position[1];
+                                transform->position.z = position[2];
                             }
                         }
 
-                        // Material Block
-                        if (ImGui::TreeNode("Material"))
-                        {
-                            std::shared_ptr<Material> material = meshRenderable->GetMaterial();
-                            if (material)
-                            {
-
-                                // Texture properties
-                                ImGui::SeparatorText("Material properties");
-
-                                float color[3] = {material->GetColor().x, material->GetColor().y, material->GetColor().z};
-                                if (ImGui::ColorPicker3("", color, ImGuiColorEditFlags_Float )){
-                                    material->SetColor(glm::vec3(color[0], color[1], color[2]));
-                                }
-
-                                float shine = material->GetShininess();
-                                if (ImGui::SliderFloat("Shininess", &shine, 0.0f, 256.0f))
-                                {
-                                    material->SetShininess(shine);
-                                }
-
-                                ImGui::Separator();
-
-                                // ====== MATERIAL MAPS ======
-                                ImGui::SeparatorText("DIFFUSE MAP");
-                                ImGui::Text("Path: %s", material->GetDiffuseMap()->GetPath().c_str());
-                                ImGui::Text("Resolution: %d x %d", material->GetDiffuseMap()->GetWidth(), material->GetDiffuseMap()->GetHeight());
-                                ImGui::Image(material->GetDiffuseMap()->GetUID(), _thumbnailSize);
-                                ImGui::Dummy(ImVec2(0,10));
-
-                                ImGui::SeparatorText("SPECULAR MAP");
-                                ImGui::Text("Path: %s", material->GetSpecularMap()->GetPath().c_str());
-                                ImGui::Text("Resolution: %d x %d", material->GetSpecularMap()->GetWidth(), material->GetSpecularMap()->GetHeight());
-                                ImGui::Image(material->GetSpecularMap()->GetUID(), _thumbnailSize);
-                                ImGui::Dummy(ImVec2(0,10));
-
-                                ImGui::SeparatorText("EMISSION MAP");
-                                ImGui::Text("Path: %s", material->GetEmissionMap()->GetPath().c_str());
-                                ImGui::Text("Resolution: %d x %d", material->GetEmissionMap()->GetWidth(), material->GetEmissionMap()->GetHeight());
-                                ImGui::Image(material->GetEmissionMap()->GetUID(), _thumbnailSize);
-                                ImGui::Dummy(ImVec2(0,10));
-
-                                // ====== SHADER ======
-                                std::shared_ptr<Shader> shader = material->GetShader();
-                                if (shader)
-                                {
-                                    ImGui::SeparatorText("SHADER");
-                                    ImGui::Text("Shader UID: %u", shader->GetShaderUID());
-
-                                    ImGui::Text("Vertex Shader");
-                                    // ImGui::TextUnformatted("%s", shader->GetFilePath(GL_VERTEX_SHADER).c_str());
-                                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.3f, 0.0f, 0.3f, 1.0f));
-                                    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-                                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-                                    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 20));
-
-                                    ImGui::BeginChild("Vertex shader source code", ImVec2(0,300), ImGuiChildFlags_Border, ImGuiWindowFlags_HorizontalScrollbar);
-                                    ImGui::TextUnformatted(shader->GetSourceCode(GL_VERTEX_SHADER).c_str());
-                                    ImGui::EndChild();
-
-                                    ImGui::PopStyleColor(1);
-                                    ImGui::Dummy(ImVec2(0,10));
-                                    ImGui::Text("Fragment Shader");
-                                    ImGui::Dummy(ImVec2(0,10));
-                                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-                                    // ImGui::TextUnformatted("%s", shader->GetFilePath(GL_FRAGMENT_SHADER).c_str());
-                                    ImGui::BeginChild("Fragment shader source code", ImVec2(0,300), ImGuiChildFlags_Border, ImGuiWindowFlags_HorizontalScrollbar);
-                                    ImGui::TextUnformatted(shader->GetSourceCode(GL_FRAGMENT_SHADER).c_str());
-                                    ImGui::EndChild();
-
-                                    ImGui::PopStyleColor(3);
-                                    ImGui::PopStyleVar(1);
-                                }
-                            }
-                            else
-                            {
-                                ImGui::Text("No material");
-                            }
-
-                            ImGui::TreePop();
-                        }
-                        ImGui::TreePop();
-                        ImGui::Separator();
-                    }
-                }
-
-                // Display PointLight component if it exists
-                PointLight* pointLight = entity.GetComponent<PointLight>();
-                if (pointLight)
-                {
-                    if (ImGui::TreeNode("PointLight"))
-                    {
+                        // Light properties
                         ImGui::SeparatorText("Light properties");
 
-                        // ImGui::Text("Ambient: (%.2f, %.2f, %.2f)",
-                        //     pointLight->GetAmbient().x, pointLight->GetAmbient().y, pointLight->GetAmbient().z);
                         float ambientPointLight[3] = {pointLight->GetAmbient().x, pointLight->GetAmbient().y, pointLight->GetAmbient().z};
                         if (ImGui::DragFloat3("Ambient", ambientPointLight, 0.01f)){
                             pointLight->SetAmbient(glm::vec3(ambientPointLight[0], ambientPointLight[1], ambientPointLight[2]));
                         }
 
-                        // ImGui::Text("Diffuse: (%.2f, %.2f, %.2f)",
-                        //     pointLight->GetDiffuse().x, pointLight->GetDiffuse().y, pointLight->GetDiffuse().z);
                         float diffusePointLight[3] = {pointLight->GetDiffuse().x, pointLight->GetDiffuse().y, pointLight->GetDiffuse().z};
                         if (ImGui::DragFloat3("Diffuse", diffusePointLight, 0.01f)){
                             pointLight->SetDiffuse(glm::vec3(diffusePointLight[0], diffusePointLight[1], diffusePointLight[2]));
                         }
 
-                        // ImGui::Text("Specular: (%.2f, %.2f, %.2f)",
-                        //     pointLight->GetSpecular().x, pointLight->GetSpecular().y, pointLight->GetSpecular().z);
                         float specularPointLight[3] = {pointLight->GetSpecular().x, pointLight->GetSpecular().y, pointLight->GetSpecular().z};
                         if (ImGui::DragFloat3("Specular", specularPointLight, 0.01f)){
                             pointLight->SetSpecular(glm::vec3(specularPointLight[0], specularPointLight[1], specularPointLight[2]));
                         }
 
+                        // Attenuation
                         ImGui::SeparatorText("Attenuation");
 
                         float constant = pointLight->GetConstant();
@@ -402,64 +273,186 @@ void UIManager::DrawHierarchyPanel()
 
                         // Plot graphical representation of the attenuation
                         float att[] = {constant + linear * 1 + quadratic * 1,
-                                        constant + linear * 3 + quadratic * 9,
-                                        constant + linear * 5 + quadratic * 25,
-                                        constant + linear * 10 + quadratic * 100,
-                                        constant + linear * 20 + quadratic * 400,
-                                        constant + linear * 40 + quadratic * 1600,
-                                        constant + linear * 60 + quadratic * 3600};
+                                      constant + linear * 3 + quadratic * 9,
+                                      constant + linear * 5 + quadratic * 25,
+                                      constant + linear * 10 + quadratic * 100,
+                                      constant + linear * 20 + quadratic * 400,
+                                      constant + linear * 40 + quadratic * 1600,
+                                      constant + linear * 60 + quadratic * 3600};
                         ImGui::PlotLines("Attenuation graph", att, IM_ARRAYSIZE(att));
 
                         ImGui::TreePop();
-
-                        ImGui::Separator();
                     }
                 }
+            }
+            else
+            {
+                ImGui::Text("No point lights in the scene");
+            }
 
-                // Display DirectionalLight component if it exists
-                DirectionalLight* dirLight = entity.GetComponent<DirectionalLight>();
-                if (dirLight)
+            ImGui::TreePop();
+        }
+
+        // Display Renderables
+        if (ImGui::TreeNode("Renderables"))
+        {
+            std::vector<std::shared_ptr<Renderable>>& renderables = renderer->GetRenderables();
+
+            if (!renderables.empty())
+            {
+                for (size_t i = 0; i < renderables.size(); i++)
                 {
-                    if (ImGui::TreeNode("DirectionalLight"))
+                    std::string renderableName = "Renderable " + std::to_string(i);
+                    if (ImGui::TreeNode(renderableName.c_str()))
                     {
-                        // Directional Light direction
-                        float direction[3] = {dirLight->GetDirection().x, dirLight->GetDirection().y , dirLight->GetDirection().z };
-                        if (ImGui::DragFloat3("Direction", direction, 0.1f)) {
-                            dirLight->SetDirection(glm::vec3(direction[0], direction[1], direction[2]));
+                        auto& renderable = renderables[i];
+                        Transform* transform = renderable->GetTransform();
+
+                        // Transform component
+                        if (transform && ImGui::TreeNode("Transform"))
+                        {
+                            // Position
+                            float position[3] = {transform->position.x, transform->position.y, transform->position.z};
+                            if (ImGui::DragFloat3("Position", position, 0.1f))
+                            {
+                                transform->position.x = position[0];
+                                transform->position.y = position[1];
+                                transform->position.z = position[2];
+                            }
+
+                            // Rotation
+                            float rotation[3] = {transform->rotation.x, transform->rotation.y, transform->rotation.z};
+                            if (ImGui::DragFloat3("Rotation", rotation, 0.1f))
+                            {
+                                transform->rotation.x = rotation[0];
+                                transform->rotation.y = rotation[1];
+                                transform->rotation.z = rotation[2];
+                            }
+
+                            // Scale
+                            float scale[3] = {transform->scale.x, transform->scale.y, transform->scale.z};
+                            if (ImGui::DragFloat3("Scale", scale, 0.05f))
+                            {
+                                transform->scale.x = scale[0];
+                                transform->scale.y = scale[1];
+                                transform->scale.z = scale[2];
+                            }
+
+                            ImGui::Text("Parent Transform: ");
+                            transform->GetParent() != nullptr ? ImGui::Text("Has parent") : ImGui::Text("none");
+
+                            ImGui::TreePop();
                         }
 
-                        // Directional Light ambient
-                        float ambientDirLight[3] = { dirLight->GetAmbient().x, dirLight->GetAmbient().y, dirLight->GetAmbient().z};
-                        if (ImGui::DragFloat3("Ambient", ambientDirLight, 0.01f, 0.0f, 1.0f)) {
-                            dirLight->SetAmbient(glm::vec3(ambientDirLight[0], ambientDirLight[1], ambientDirLight[2]));
+                        // Mesh component
+                        std::shared_ptr<Mesh> mesh = renderable->GetMesh();
+                        if (mesh && ImGui::TreeNode("Mesh"))
+                        {
+                            ImGui::SeparatorText("Mesh properties");
+                            ImGui::Text("Vertices: %d", mesh->GetNumVertices());
+                            ImGui::Text("Indices: %d", mesh->GetNumIndices());
+                            ImGui::Text("VAO ID: %u", mesh->GetVertexArray()->GetUid());
+                            ImGui::Text("EBO ID: %u", mesh->GetVertexArray()->GetIndexBuffer()->GetUid());
+
+                            std::vector<std::shared_ptr<VertexBuffer>> vbos = mesh->GetVertexArray()->GetVertexBuffers();
+                            ImGui::Text("Vertex Buffers: %u", vbos.size());
+                            for (unsigned int j = 0; j < vbos.size(); j++)
+                            {
+                                ImGui::Text("\t VBO [%u] UID: %u", j, vbos[j]->GetUid());
+                            }
+
+                            ImGui::Dummy(ImVec2(0, 10));
+                            ImGui::SeparatorText("Layout Buffer");
+                            ImGui::Text("%s", mesh->GetVertexArray()->GetLayoutBuffer().ToString().c_str());
+
+                            ImGui::TreePop();
                         }
 
-                        // Directional Light diffuse
-                        float diffuseDirLight[3] = { dirLight->GetDiffuse().x, dirLight->GetDiffuse().y, dirLight->GetDiffuse().z };
-                        if (ImGui::DragFloat3("Diffuse", diffuseDirLight, 0.01f, 0.0f, 1.0f)) {
-                            dirLight->SetDiffuse(glm::vec3(diffuseDirLight[0], diffuseDirLight[1], diffuseDirLight[2]));
-                        }
+                        // Material component
+                        std::shared_ptr<Material> material = renderable->GetMaterial();
+                        if (material && ImGui::TreeNode("Material"))
+                        {
+                            ImGui::SeparatorText("Material properties");
 
-                        float specularDirLight[3] =  {dirLight->GetSpecular().x, dirLight->GetSpecular().y, dirLight->GetSpecular().z};
-                        if (ImGui::DragFloat3("Specular", specularDirLight, 0.1f, 0.0f, 1.0f)){
-                            dirLight->SetSpecular(glm::vec3(specularDirLight[0], specularDirLight[1], specularDirLight[2]));
+                            float color[3] = {material->GetColor().x, material->GetColor().y, material->GetColor().z};
+                            if (ImGui::ColorPicker3("", color, ImGuiColorEditFlags_Float)){
+                                material->SetColor(glm::vec3(color[0], color[1], color[2]));
+                            }
+
+                            float shine = material->GetShininess();
+                            if (ImGui::SliderFloat("Shininess", &shine, 0.0f, 256.0f))
+                            {
+                                material->SetShininess(shine);
+                            }
+
+                            // Material maps
+                            if (material->GetDiffuseMap())
+                            {
+                                ImGui::SeparatorText("DIFFUSE MAP");
+                                ImGui::Text("Path: %s", material->GetDiffuseMap()->GetPath().c_str());
+                                ImGui::Text("Resolution: %d x %d", material->GetDiffuseMap()->GetWidth(), material->GetDiffuseMap()->GetHeight());
+                                ImGui::Image(material->GetDiffuseMap()->GetUID(), _thumbnailSize);
+                            }
+
+                            if (material->GetSpecularMap())
+                            {
+                                ImGui::SeparatorText("SPECULAR MAP");
+                                ImGui::Text("Path: %s", material->GetSpecularMap()->GetPath().c_str());
+                                ImGui::Text("Resolution: %d x %d", material->GetSpecularMap()->GetWidth(), material->GetSpecularMap()->GetHeight());
+                                ImGui::Image(material->GetSpecularMap()->GetUID(), _thumbnailSize);
+                            }
+
+                            if (material->GetEmissionMap())
+                            {
+                                ImGui::SeparatorText("EMISSION MAP");
+                                ImGui::Text("Path: %s", material->GetEmissionMap()->GetPath().c_str());
+                                ImGui::Text("Resolution: %d x %d", material->GetEmissionMap()->GetWidth(), material->GetEmissionMap()->GetHeight());
+                                ImGui::Image(material->GetEmissionMap()->GetUID(), _thumbnailSize);
+                            }
+
+                            // Shader
+                            std::shared_ptr<Shader> shader = material->GetShader();
+                            if (shader)
+                            {
+                                ImGui::SeparatorText("SHADER");
+                                ImGui::Text("Shader UID: %u", shader->GetShaderUID());
+
+                                ImGui::Text("Vertex Shader");
+                                ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.3f, 0.0f, 0.3f, 1.0f));
+                                ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+                                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 20));
+
+                                ImGui::BeginChild("Vertex shader source code", ImVec2(0, 300), ImGuiChildFlags_Border, ImGuiWindowFlags_HorizontalScrollbar);
+                                ImGui::TextUnformatted(shader->GetSourceCode(GL_VERTEX_SHADER).c_str());
+                                ImGui::EndChild();
+
+                                ImGui::PopStyleColor(1);
+                                ImGui::Dummy(ImVec2(0, 10));
+                                ImGui::Text("Fragment Shader");
+                                ImGui::Dummy(ImVec2(0, 10));
+                                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+                                ImGui::BeginChild("Fragment shader source code", ImVec2(0, 300), ImGuiChildFlags_Border, ImGuiWindowFlags_HorizontalScrollbar);
+                                ImGui::TextUnformatted(shader->GetSourceCode(GL_FRAGMENT_SHADER).c_str());
+                                ImGui::EndChild();
+
+                                ImGui::PopStyleColor(3);
+                                ImGui::PopStyleVar(1);
+                            }
+
+                            ImGui::TreePop();
                         }
 
                         ImGui::TreePop();
-
-                        ImGui::Separator();
                     }
                 }
-
-
-
-
-                ImGui::TreePop();
             }
-            ImGui::Separator();
+            else
+            {
+                ImGui::Text("No renderables in the scene");
+            }
 
+            ImGui::TreePop();
         }
-
-        ImGui::End();
-    }
 }

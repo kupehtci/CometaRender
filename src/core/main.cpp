@@ -51,86 +51,85 @@ int main() {
                                     "resources/black.jpg");
 
     brickMaterial->LoadShader("Blinn phong shader",
-        "src/render/shaders/light_map_shader.vert",
-    "src/render/shaders/light_map_shader.frag" );
+        "src/render/shaders/blinn_phong_shader.vert",
+    "src/render/shaders/blinn_phong_shader.frag" );
 
-    // Geometry definition
-    float vertices[] = {
-        // positions          // normals           // colors            // texture coords
-        // Front face
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
-
-        // Back face
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
-
-        // Top face
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
-
-        // Bottom face
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 0.0f,
-
-        // Right face
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-
-        // Left face
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  0.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  0.0f, 1.0f
-    };
-
-    unsigned int indices[] = {
-        0,  1,  2,    2,  3,  0,   // Front
-        4,  5,  6,    6,  7,  4,   // Back
-        8,  9,  10,   10, 11, 8,   // Top
-        12, 13, 14,   14, 15, 12,  // Bottom
-        16, 17, 18,   18, 19, 16,  // Right
-        20, 21, 22,   22, 23, 20   // Left
-    };
+    // // Geometry definition
+    // float vertices[] = {
+    //     // positions          // normals           // colors            // texture coords
+    //     // Front face
+    //     -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+    //     0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+    //     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+    //     -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+    //
+    //     // Back face
+    //     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+    //     -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+    //     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+    //     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+    //
+    //     // Top face
+    //     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+    //     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+    //     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+    //     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+    //
+    //     // Bottom face
+    //     -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+    //     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+    //     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+    //     -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+    //
+    //     // Right face
+    //     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+    //     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+    //     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+    //     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+    //
+    //     // Left face
+    //     -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  0.0f, 0.0f,
+    //     -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  1.0f, 0.0f,
+    //     -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  1.0f, 1.0f,
+    //     -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  0.0f, 1.0f
+    // };
+    //
+    // unsigned int indices[] = {
+    //     0,  1,  2,    2,  3,  0,   // Front
+    //     4,  5,  6,    6,  7,  4,   // Back
+    //     8,  9,  10,   10, 11, 8,   // Top
+    //     12, 13, 14,   14, 15, 12,  // Bottom
+    //     16, 17, 18,   18, 19, 16,  // Right
+    //     20, 21, 22,   22, 23, 20   // Left
+    // };
 
     // Create mesh
-    std::shared_ptr<Mesh> brickMesh = std::make_shared<Mesh>();
-    brickMesh->AddVertices(vertices, sizeof(vertices) / sizeof(float));
-    brickMesh->AddIndices(indices, sizeof(indices) / sizeof(unsigned int));
+    // std::shared_ptr<Mesh> brickMesh = std::make_shared<Mesh>();
+    // brickMesh->AddVertices(vertices, sizeof(vertices) / sizeof(float));
+    // brickMesh->AddIndices(indices, sizeof(indices) / sizeof(unsigned int));
+    //
+    // brickMesh->SetLayoutBuffer({
+    //     {0, DataType::Float3, "aPos"},
+    //     {1, DataType::Float3, "aNormal"},
+    //     {2, DataType::Float3, "aColor"},
+    //     {3, DataType::Float2, "aTexCoord"}
+    //     });
+    // brickMesh->Build();
 
-    brickMesh->SetLayoutBuffer({
-        {0, DataType::Float3, "aPos"},
-        {1, DataType::Float3, "aNormal"},
-        {2, DataType::Float3, "aColor"},
-        {3, DataType::Float2, "aTexCoord"}
-        });
-    brickMesh->Build();
+    // Create a renderable object
+    std::shared_ptr<Renderable> cubeRenderable = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform);
 
-    // Create a renderable object using the new API
-    std::shared_ptr<Renderable> cubeRenderable = _renderer->CreateRenderable(brickMesh, brickMaterial, cubeTransform);
 
-    // Create light transform
+    // Create point light
     Transform* lightTransform = new Transform();
     lightTransform->position = glm::vec3(0.0f, 1.0f, -2.0f);
     lightTransform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
-
-    // Create point light using the new API
     std::shared_ptr<PointLight> pointLight = _renderer->CreatePointLight(lightTransform);
     pointLight->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
     pointLight->SetDiffuse(glm::vec3(0.8f, 0.8f, 0.8f));
     pointLight->SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
 
-    // Create a light mesh (optional, for visualization)
+    // Create a light mesh
     auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f),
                                     glm::vec3(1.0f, 1.0f, 1.0f),
                                     glm::vec3(1.0f, 1.0f, 1.0f),
@@ -141,10 +140,35 @@ int main() {
                                     "resources/black.jpg");
     lightMaterial->LoadShader("Light Shader","src/render/shaders/light_shader.vert", "src/render/shaders/light_shader.frag");
     auto lightMesh = Mesh::CreateSphere();
-    
 
     std::shared_ptr<Renderable> lightRenderable = _renderer->CreateRenderable(lightMesh, lightMaterial, lightTransform);
 
+    // Floor renderable
+    Transform* floorTransform = new Transform();
+    floorTransform->position = glm::vec3(-1.0f, -1.0f, -1.0f);
+    floorTransform->scale = glm::vec3(20.0f, 20.0f, 20.0f);
+
+    auto floorMaterial = std::make_shared<Material>(glm::vec3(0.5f, 1.0f, 0.5f),
+                                    glm::vec3(1.0f, 0.5f, 0.31f),
+                                    glm::vec3(1.0f, 0.5f, 0.31f),
+                                    glm::vec3(0.5f, 0.5f, 0.5f),
+                                    64.0f,
+                                    "resources/white.jpg",
+                                    "resources/white.jpg",
+                                    "resources/black.jpg");
+
+    floorMaterial->LoadShader("Blinn phong shader",
+        "src/render/shaders/blinn_phong_shader.vert",
+    "src/render/shaders/blinn_phong_shader.frag" );
+
+    auto floorRenderable = _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, floorTransform);
+
+
+    // Directional Light
+    auto directionalLightTransform = new Transform();
+    auto directionalLight = _renderer->CreateDirectionalLight(directionalLightTransform);
+
+    // Main rendering loop
     bool _applicationRunning = true;
     while (_applicationRunning)
     {

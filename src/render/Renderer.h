@@ -35,8 +35,6 @@ enum FACE_CULLING_MODE {
 };
 
 
-
-
 // Base class for all lights
 class Light {
 protected:

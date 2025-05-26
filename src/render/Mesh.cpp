@@ -124,6 +124,71 @@ std::shared_ptr<Mesh> Mesh::CreateBox()
     return boxMesh;
 }
 
+
+std::shared_ptr<Mesh> Mesh::CreateBox(float extentLength)
+{
+    float vertices[] = {
+        // Front face
+        // positions          // normals           // colors            // texture coords
+        -extentLength, -extentLength,  extentLength,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,
+        extentLength, -extentLength,  extentLength,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+        extentLength,  extentLength,  extentLength,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+        -extentLength,  extentLength,  extentLength,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f,
+
+        // Back face
+        -extentLength, -extentLength, -extentLength,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+        -extentLength,  extentLength, -extentLength,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+        extentLength,  extentLength, -extentLength,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+        extentLength, -extentLength, -extentLength,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+
+        // Top face
+        -extentLength,  extentLength, -extentLength,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+        -extentLength,  extentLength,  extentLength,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+        extentLength,  extentLength,  extentLength,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+        extentLength,  extentLength, -extentLength,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+
+        // Bottom face
+        -extentLength, -extentLength, -extentLength,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+        extentLength, -extentLength, -extentLength,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+        extentLength, -extentLength,  extentLength,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+        -extentLength, -extentLength,  extentLength,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+
+        // Right face
+        extentLength, -extentLength, -extentLength,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+        extentLength,  extentLength, -extentLength,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+        extentLength,  extentLength,  extentLength,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+        extentLength, -extentLength,  extentLength,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+
+        // Left face
+        -extentLength, -extentLength, -extentLength, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  0.0f, 0.0f,
+        -extentLength, -extentLength,  extentLength, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  1.0f, 0.0f,
+        -extentLength,  extentLength,  extentLength, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  1.0f, 1.0f,
+        -extentLength,  extentLength, -extentLength, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f, 1.0f,  0.0f, 1.0f
+    };
+
+    unsigned int indices[] = {
+        0,  1,  2,    2,  3,  0,   // Front
+        4,  5,  6,    6,  7,  4,   // Back
+        8,  9,  10,   10, 11, 8,   // Top
+        12, 13, 14,   14, 15, 12,  // Bottom
+        16, 17, 18,   18, 19, 16,  // Right
+        20, 21, 22,   22, 23, 20   // Left
+    };
+
+    std::shared_ptr<Mesh> boxMesh = std::make_shared<Mesh>();
+    boxMesh->AddVertices(vertices, sizeof(vertices) / sizeof(float));
+    boxMesh->AddIndices(indices, sizeof(indices) / sizeof(unsigned int));
+    boxMesh->SetLayoutBuffer({
+        {0, DataType::Float3, "aPos"},
+        {1, DataType::Float3, "aNormal"},
+        {2, DataType::Float3, "aColor"},
+        {3, DataType::Float2, "aTexCoord"}
+        });
+    boxMesh->Build();
+
+    return boxMesh;
+}
+
 // static
 std::shared_ptr<Mesh> Mesh::CreateSphere(unsigned int sectorCount, unsigned int stackCount, float radius)
 {
