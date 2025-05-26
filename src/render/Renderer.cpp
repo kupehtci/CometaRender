@@ -145,17 +145,17 @@ void Renderer::Update(){
         glm::mat4 lightSpaceMatrix = _directionalLight->GetLightSpaceMatrix();
         
         _shadowMapShader->Bind();
-        
+
+        // Draw the scene into the CubeMap framebuffer
         for (auto& renderable : _renderables)
         {
+            if (!renderable->DoesCastShadow()) {continue; }
+
             Transform* transform = renderable->GetTransform();
-            
-            // Set the model matrix and light space matrix
+
             _shadowMapShader->SetMatrix4("model", transform->GetWorldTransform());
             _shadowMapShader->SetMatrix4("lightSpaceMatrix", lightSpaceMatrix);
-            std::cout << "Renndering renderable into directional light shadow" << std::endl;
-            
-            // Draw the mesh
+
             renderable->GetMesh()->Bind();
             renderable->GetMesh()->Draw();
         }

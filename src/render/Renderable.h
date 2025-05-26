@@ -16,6 +16,8 @@ protected:
     std::shared_ptr<Material> _material;
     Transform* _transform;
 
+    bool _castShadow = true;
+
 public:
     Renderable(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Transform* transform)
         : _mesh(mesh), _material(material), _transform(transform) {}
@@ -31,6 +33,9 @@ public:
     void SetMesh(std::shared_ptr<Mesh> mesh) { _mesh = mesh; }
     void SetMaterial(std::shared_ptr<Material> material) { _material = material; }
     void SetTransform(Transform* transform) { _transform = transform; }
+
+    bool DoesCastShadow() const { return _castShadow; }
+    void SetCastShadow(bool value) { _castShadow = value; }
 };
 
 

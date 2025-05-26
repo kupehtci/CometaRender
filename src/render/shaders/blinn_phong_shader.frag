@@ -195,21 +195,17 @@ float CalculateShadow(vec4 fragPosLightSpace)
     // Perform perspective divide to get normalized device coordinates
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 
-    // Transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
 
-    // Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(shadowMap, projCoords.xy).r;
-
-    // Get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 
-    // Calculate bias based on depth map resolution and angle
+    // Calculate bias using deptch map
     vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(-directionalLight.direction);
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
 
-    // PCF (percentage-closer filtering) for softer shadows
+    // PCF implementation
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for(int x = -1; x <= 1; ++x)
@@ -222,9 +218,8 @@ float CalculateShadow(vec4 fragPosLightSpace)
     }
     shadow /= 9.0;
 
-    // Keep the shadow at 0.0 when outside the far plane region of the light's frustum
     if(projCoords.z > 1.0)
-    shadow = 0.0;
+        shadow = 0.0;
 
     // Return inverted shadow value (1.0 = not in shadow, 0.0 = in shadow)
     return 1.0 - shadow;
