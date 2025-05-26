@@ -37,6 +37,7 @@ public:
     // ------------ MESH CREATION METHODS ------------
 
     static std::shared_ptr<Mesh> CreateBox();
+    static std::shared_ptr<Mesh> CreateBox(float extentLength = 1.0f);
 
     static std::shared_ptr<Mesh> CreateSphere(unsigned int sectorCount = 36, unsigned int stackCount = 18, float radius = 0.5f);
 

@@ -115,6 +115,7 @@ void Renderer::Init(){
 
 }
 
+
 void Renderer::Update(){
     // Update current window
     _window->Update();
@@ -144,16 +145,17 @@ void Renderer::Update(){
         glm::mat4 lightSpaceMatrix = _directionalLight->GetLightSpaceMatrix();
         
         _shadowMapShader->Bind();
-        
+
+        // Draw the scene into the CubeMap framebuffer
         for (auto& renderable : _renderables)
         {
+            if (!renderable->DoesCastShadow()) {continue; }
+
             Transform* transform = renderable->GetTransform();
-            
-            // Set the model matrix and light space matrix
+
             _shadowMapShader->SetMatrix4("model", transform->GetWorldTransform());
             _shadowMapShader->SetMatrix4("lightSpaceMatrix", lightSpaceMatrix);
-            
-            // Draw the mesh
+
             renderable->GetMesh()->Bind();
             renderable->GetMesh()->Draw();
         }
@@ -182,6 +184,8 @@ void Renderer::Update(){
         // For now, only process the first point light
         if (!_pointLights.empty())
         {
+            std::cout << "Generate point light shadow cubemap" << std::endl;
+
             auto pointLight = _pointLights[0];
             Transform* lightTransform = pointLight->GetTransform();
             
@@ -235,7 +239,7 @@ void Renderer::Update(){
                 _pointShadowMapShader->SetMatrix4("shadowMatrices[" + std::to_string(j) + "]", shadowTransforms[j]);
             }
             
-            // Render scene from light's perspective
+
             for (auto& renderable : _renderables)
             {
                 Transform* transform = renderable->GetTransform();
@@ -299,14 +303,15 @@ void Renderer::Update(){
                 shader->SetInt("shadowMap", 5);
             }
             
-            // Bind the point shadow map texture if it exists
-            if (_pointShadowFrameBuffer)
-            {
-                // Bind the point shadow map to texture unit 6 (arbitrary choice)
-                _pointShadowFrameBuffer->BindDepthCubeMap(GL_TEXTURE6);
-                shader->SetInt("pointShadowMap", 6);
-                shader->SetFloat("far_plane", POINT_LIGHT_FAR_PLANE);
-            }
+        }
+
+        // Bind the point shadow map texture if it exists
+        if (_pointShadowFrameBuffer)
+        {
+            // Bind the point shadow map to texture unit 6 (arbitrary choice)
+            _pointShadowFrameBuffer->BindDepthCubeMap(GL_TEXTURE6);
+            shader->SetInt("pointShadowMap", 6);
+            shader->SetFloat("far_plane", POINT_LIGHT_FAR_PLANE);
         }
 
         // Bind each point light to the shader
