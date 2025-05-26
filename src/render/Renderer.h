@@ -193,10 +193,14 @@ public:
 
     // Create renderable objects
     std::shared_ptr<Renderable> CreateRenderable(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Transform* transform);
+    std::vector<std::shared_ptr<Renderable>>& GetRenderables() { return _renderables; }
     
     // Light management
     std::shared_ptr<PointLight> CreatePointLight(Transform* transform);
+    std::vector<std::shared_ptr<PointLight>>& GetPointLights() {return _pointLights; }
     std::shared_ptr<DirectionalLight> CreateDirectionalLight(Transform* transform);
+    std::shared_ptr<DirectionalLight>& GetDirectionalLight() {return _directionalLight; }
+
     
     // Camera Management
     void SetCamera(Camera* camera) { _camera = camera; }
@@ -205,7 +209,6 @@ public:
     [[nodiscard]] inline Window* GetWindow() const { return _window; }
     inline static bool ShouldClose () { return glfwWindowShouldClose(Renderer::GetInstancePtr()->GetWindow()->GetGlfwWindow()); }
 
-    // TODO: Remain to implement
     inline void SetDepthCulling(bool value) { _depthCulling = value; }
     inline void SetFaceCulling(FACE_CULLING_MODE value) {
     }
