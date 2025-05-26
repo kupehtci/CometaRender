@@ -11,8 +11,8 @@
 class Time : public SingletonManager<Time> {
 
 private: 
-	float _deltaTime;
-	float _timeScale;
+	float _deltaTime = 0.0f;
+	float _timeScale = 0.0f;
 
 
 	// utils

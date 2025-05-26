@@ -212,11 +212,11 @@ public:
     // Create renderable objects
     std::shared_ptr<Renderable> CreateRenderable(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Transform* transform);
     
-    // Create lights
+    // Light management
     std::shared_ptr<PointLight> CreatePointLight(Transform* transform);
     std::shared_ptr<DirectionalLight> CreateDirectionalLight(Transform* transform);
     
-    // Set camera
+    // Camera Management
     void SetCamera(Camera* camera) { _camera = camera; }
     Camera* GetCamera() const { return _camera; }
 
