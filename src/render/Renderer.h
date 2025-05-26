@@ -6,15 +6,17 @@
 #define GLAD_GL_IMPLEMENTATION
 #define GLFW_INCLUDE_NONE
 
-#include "core/CometaDefaults.h"
-#include "core/Singleton.h"
-#include "render/Window.h"
 
 #ifndef AURAGL_RENDERER_H
 #define AURAGL_RENDERER_H
 
 #include "render/FrameBuffer.h"
 #include "render/CubeMapFrameBuffer.h"
+#include "core/CometaDefaults.h"
+#include "core/Singleton.h"
+#include "render/Window.h"
+#include "render/Renderable.h"
+#include "UI/UIManager.h"
 #include <memory>
 #include <vector>
 #include <glm.hpp>
@@ -25,35 +27,15 @@ class Material;
 class Camera;
 class Transform;
 
+
 enum FACE_CULLING_MODE {
     FACE_CULLING_NONE = 0, 
     FACE_CULLING_CLOCKWISE = 1, 
     FACE_CULLING_COUNTER_CLOCKWISE = 2
 };
 
-// Base class for all renderable objects
-class Renderable {
-protected:
-    std::shared_ptr<Mesh> _mesh;
-    std::shared_ptr<Material> _material;
-    Transform* _transform;
 
-public:
-    Renderable(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Transform* transform)
-        : _mesh(mesh), _material(material), _transform(transform) {}
-    
-    virtual ~Renderable() = default;
-    
-    // Getters
-    std::shared_ptr<Mesh> GetMesh() const { return _mesh; }
-    std::shared_ptr<Material> GetMaterial() const { return _material; }
-    Transform* GetTransform() const { return _transform; }
-    
-    // Setters
-    void SetMesh(std::shared_ptr<Mesh> mesh) { _mesh = mesh; }
-    void SetMaterial(std::shared_ptr<Material> material) { _material = material; }
-    void SetTransform(Transform* transform) { _transform = transform; }
-};
+
 
 // Base class for all lights
 class Light {

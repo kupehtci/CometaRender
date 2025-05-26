@@ -13,14 +13,6 @@
 #include "render/Shader.h"
 
 int main() {
-
-    // Application* app = Application::GetInstancePtr();
-    // app->Init();
-    // app->Running();
-    // app->Close();
-    //
-    // delete app;
-
     Renderer::Create();
     Renderer* _renderer = Renderer::GetInstancePtr();
 
@@ -30,9 +22,13 @@ int main() {
     Time::Create();
     Time* _time = Time::GetInstancePtr();
 
+    UIManager::Create();
+    UIManager* _uimanager = UIManager::GetInstancePtr();
+
     _renderer->Init();
     _input->Init();
     _time->Init();
+    _uimanager->Init();
 
     // Initialize main components
     Camera* currentCamera = new Camera();
@@ -155,6 +151,7 @@ int main() {
         _renderer->Update();
         _input->Update();
         _time->Update();
+        _uimanager->Update();
 
         if (Input::IsKeyPressed(GLFW_KEY_ESCAPE) ||
             Renderer::ShouldClose()){ _applicationRunning = false;}
@@ -166,6 +163,7 @@ int main() {
     delete lightTransform;
     delete currentCamera;
 
+    _uimanager->Close();
     _time->Close();
     _input->Close();
     _renderer->Close();
