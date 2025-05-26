@@ -1,13 +1,9 @@
 #include "Buffer.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 // --------- Vertex Buffer ---------
 
 VertexBuffer::VertexBuffer()
 {
-	_empty = true;
 	_uid = 0;
 }
 
@@ -24,7 +20,7 @@ VertexBuffer::VertexBuffer(float* vertices, uint32_t size) {
 }
 
 VertexBuffer::~VertexBuffer() {
-	// glDeleteBuffers(1, &_uid);
+	glDeleteBuffers(1, &_uid);
 }
 
 void VertexBuffer::Bind() {
@@ -40,7 +36,7 @@ void VertexBuffer::Unbind() {
 
 IndexBuffer::IndexBuffer()
 {
-	_empty = true;
+	_uid = 0;
 }
 
 IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t size) {
@@ -51,7 +47,7 @@ IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t size) {
 }
 
 IndexBuffer::~IndexBuffer() {
-	// glDeleteBuffers(1, &_uid);
+	glDeleteBuffers(1, &_uid);
 }
 
 void IndexBuffer::Bind() {

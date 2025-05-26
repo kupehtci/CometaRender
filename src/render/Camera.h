@@ -52,10 +52,19 @@ public:
 
     // --------- GETTERS ---------
 public: 
-    glm::vec3 GetPosition() { return _position;  }
-    glm::mat4 GetProyectionMatrix() { return _projectionMatrix; }
-    glm::mat4 GetViewMatrix() { return _viewMatrix;  }
-    glm::mat4 GetViewProyection() { return _projectionMatrix * _viewMatrix; }
+    [[nodiscard]] glm::vec3 GetPosition() { return _position;  }
+    [[nodiscard]] glm::vec3 GetDirection() { return _direction;  }
+    [[nodiscard]] glm::vec3 GetUp() { return _up;  }
+    [[nodiscard]] glm::vec3 GetRight() { return _right;  }
+
+    [[nodiscard]] float GetNear() { return _near; }
+    [[nodiscard]] float GetFar() { return _far; }
+    [[nodiscard]] float GetFov() { return _fov; }
+
+    [[nodiscard]] glm::mat4 GetProyectionMatrix() { return _projectionMatrix; }
+    [[nodiscard]] glm::mat4 GetViewMatrix() { return _viewMatrix;  }
+    [[nodiscard]] glm::mat4 GetViewProyection() { return _projectionMatrix * _viewMatrix; }
+
 };
 
 

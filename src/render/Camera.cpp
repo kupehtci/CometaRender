@@ -74,29 +74,34 @@ Camera::~Camera() {
 
 void Camera::OnUpdate() {
 
+    // Move camera with ALT key pressedx
     _right = glm::normalize(glm::cross(_up, _direction)); 
 
-    if(Input::IsKeyPressed(GLFW_KEY_W)) {
-        _position += _direction * _movementSpeed * Time::GetDeltaTime();
+    if (Input::IsKeyPressed(GLFW_KEY_LEFT_ALT))
+    {
+        if(Input::IsKeyPressed(GLFW_KEY_W)) {
+            std::cout << "moving forward: position: "<< _position.x << ", "<< _position.y << ", " << _position.z << std::endl;
+            _position += _direction * _movementSpeed * Time::GetDeltaTime();
+        }
+        if(Input::IsKeyPressed(GLFW_KEY_S)) {
+            _position -= _direction * _movementSpeed * Time::GetDeltaTime();
+        }
+        if(Input::IsKeyPressed(GLFW_KEY_A)) {
+            _position += _right * _movementSpeed * Time::GetDeltaTime();
+        }
+        if(Input::IsKeyPressed(GLFW_KEY_D)) {
+            _position -= _right * _movementSpeed * Time::GetDeltaTime();
+        }
     }
-    if(Input::IsKeyPressed(GLFW_KEY_S)) {
-        _position -= _direction * _movementSpeed * Time::GetDeltaTime();
-    }
-    if(Input::IsKeyPressed(GLFW_KEY_A)) {
-        _position += _right * _movementSpeed * Time::GetDeltaTime();
-    }
-    if(Input::IsKeyPressed(GLFW_KEY_D)) {
-        _position -= _right * _movementSpeed * Time::GetDeltaTime();
-    }
-
 
     // Update direction
-    // std::cout << " camera yaw: " << _yaw << " and pitch " << _pitch << std::endl;
-
     glm::vec2 mouseDelta = Input::GetMouseDelta();
 
-    _yaw += (mouseDelta.x * _sensitivity);
-    _pitch -= (mouseDelta.y * _sensitivity);
+    if (Input::IsKeyPressed(GLFW_KEY_LEFT_ALT))
+    {
+        _yaw += (mouseDelta.x * _sensitivity);
+        _pitch -= (mouseDelta.y * _sensitivity);
+    }
 
     _pitch = CometaMath::Scope(_pitch, -89.0f, 89.0f);
 
@@ -109,7 +114,7 @@ void Camera::OnUpdate() {
     
 
     // Update shader coordinates system
-    Quad currentResolution = Renderer::GetInstancePtr()->GetWindow()->GetCurrentResolution();
+    glm::vec2 currentResolution = Renderer::GetInstancePtr()->GetWindow()->GetCurrentResolution();
     _projectionMatrix = glm::perspective(glm::radians(_fov), static_cast<float>((float)currentResolution.x / (float)currentResolution.y), _near, _far);
 
     _viewMatrix = glm::lookAt(_position, _position + _direction, _up); // glm::translate(glm::mat4(1.0f), _direction );

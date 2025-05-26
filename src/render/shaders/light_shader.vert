@@ -16,5 +16,6 @@ void main()
 {
     FragPos = vec3(uModel * vec4(aPos, 1.0));
     gl_Position = uViewProjection * vec4(FragPos, 1.0);
+
     ourColor = aColor;
 }

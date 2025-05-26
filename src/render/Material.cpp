@@ -23,11 +23,12 @@ void Material::LoadShader(const Shader& shader)
 {
     _shader = std::make_shared<Shader>(shader);
 }
+
 void Material::LoadShader(const std::string& name, const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
-    // _shader = std::make_shared<Shader>(name, vertexShaderPath, fragmentShaderPath);
     _shader = Shader::LoadShader(name, vertexShaderPath, fragmentShaderPath);
 }
+
 void Material::UnsetShader()
 {
     _shader = nullptr;
@@ -39,6 +40,12 @@ void Material::UnsetShader()
  * Binds imply to setting all the GPU uniforms and structures with the data stored in the object
  */
 void Material::Bind(){
+
+    if (_shader == nullptr)
+    {
+        COMETA_WARNING("[Material] Material doesn't have a shader");
+        return;
+    }
 
     _shader->Bind();
     int initialTextureIndex = 0;

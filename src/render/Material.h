@@ -102,6 +102,10 @@ public:
     void SetSpecular(glm::vec3 specular) { _specular = specular; }
     void SetShininess(float shininess) {_shininess = shininess; }
 
+    void SetHasDiffuseMap(bool value) {_hasDiffuseMap = value; }
+    void SetHasSpecularMap(bool value) {_hasSpecularMap = value; }
+    void SetHasEmissionMap(bool value) {_hasEmissionMap = value; }
+
     // --------- GETTERS ---------
     // Material properties getters
     [[nodiscard]] glm::vec3 GetColor() const { return _color; }
@@ -114,6 +118,10 @@ public:
     [[nodiscard]] inline std::shared_ptr<Texture> GetDiffuseMap() const { return _diffuseMap; }
     [[nodiscard]] inline std::shared_ptr<Texture> GetSpecularMap() const { return _specularMap; }
     [[nodiscard]] inline std::shared_ptr<Texture> GetEmissionMap() const { return _emissionMap; }
+
+    [[nodiscard]] inline bool HasDiffuseMap() const { return _hasDiffuseMap; }
+    [[nodiscard]] inline bool HasSpecularMap() const { return _hasSpecularMap; }
+    [[nodiscard]] inline bool HasEmissionMap() const { return _hasEmissionMap; }
 
     // Shader getters
     [[nodiscard]] std::shared_ptr<Shader> GetShader() const { return _shader; }

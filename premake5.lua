@@ -14,6 +14,7 @@ IncludeDir["GLM"] = "vendor/glm/glm"
 IncludeDir["GLFW"] = "vendor/GLFW/include"
 IncludeDir["GLAD"] = "vendor/glad/include"
 IncludeDir["STB_IMAGE"] = "vendor/stb_image"
+IncludeDir["ImGUI"] = "vendor/imgui"
 
 
 -- Include other Premake5 files for:
@@ -27,6 +28,14 @@ project "CometaGL"
     cppdialect "C++17"
 
     includedirs {
+        "%{IncludeDir.ImGUI}",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLM}",
+        "%{IncludeDir.GLAD}",
+        "%{IncludeDir.STB_IMAGE}",
+        "vendor/imgui/backends/imgui_impl_glfw.h",
+        "vendor/imgui/backends/imgui_impl_opengl3.h",
+        "vendor/imgui/misc/cpp/imgui_stdlib.h",
         "src"
         --"vendor/GLFW/src"
 --             "src/debug",
@@ -41,7 +50,15 @@ project "CometaGL"
             "src/**.h",
             "src/**.cpp",
             "src/**.vert",
-            "src/**.frag"
+            "src/**.frag",
+            "%{IncludeDir.ImGUI}/*.h",
+            "%{IncludeDir.ImGUI}/*.cpp",
+            "vendor/imgui/backends/imgui_impl_glfw.h",
+            "vendor/imgui/backends/imgui_impl_opengl3.h",
+            "vendor/imgui/misc/cpp/imgui_stdlib.h",
+            "vendor/imgui/backends/imgui_impl_glfw.cpp",
+            "vendor/imgui/backends/imgui_impl_opengl3.cpp",
+            "vendor/imgui/misc/cpp/imgui_stdlib.cpp"
     }
 
 
@@ -52,10 +69,6 @@ project "CometaGL"
     filter "system:macosx"
 
         includedirs{
-            "%{IncludeDir.GLFW}",
-            "%{IncludeDir.GLM}",
-            "%{IncludeDir.GLAD}",
-            "%{IncludeDir.STB_IMAGE}",
             "/opt/homebrew/include",
             --"/vendor/GLFW/include/GLFW_macos"
         }
@@ -79,12 +92,9 @@ project "CometaGL"
 
     -- WINDOWS Expecifications
     filter "system:windows"
-        includedirs{
-            "%{IncludeDir.GLFW}",
-            "%{IncludeDir.GLM}",
-            "%{IncludeDir.GLAD}",
-            "%{IncludeDir.STB_IMAGE}"
-        }
+        --includedirs{
+        --
+        --}
         libdirs{
             "vendor/GLFW/lib"
         }

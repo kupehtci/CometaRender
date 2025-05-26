@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
 
-
+#include <sstream>
 
 LayoutBuffer::~LayoutBuffer() {
 	Unbind(); 
@@ -24,7 +24,7 @@ void LayoutBuffer::Build() {
 	uint32_t calcOffset = 0;
 	
 	// For each layout position, sum the stride and size
-	// 
+	//
 	for (int i = 0; i < _layouts.size(); i++) {
 		// _layouts[i]._position = i;		      // Positions are settled in the LayoutBuffer declaration
 		_layouts[i]._offset = calcOffset;
@@ -87,4 +87,19 @@ void LayoutBuffer::Debug() const {
 		std::cout << "Layout: " << layout._position << " " << layout._name << " type: " << static_cast<int>(layout._type) << " with stride: " << layout._size << " and offset: " << layout._offset << std::endl;
 	}
 }
+
+std::string LayoutBuffer::ToString() const
+{
+	std::stringstream stream;
+	for (auto const& layout : _layouts) {
+		stream << "Layout: " << layout._position
+			   << "\t" << layout._name
+			   << "\t type: " << static_cast<int>(layout._type)
+			   << "\t stride: " << layout._size
+			   << "\t offset: " << layout._offset
+			   << "\n";
+	}
+	return stream.str();
+}
+
 

@@ -45,9 +45,13 @@ in vec3 Normal;
 // Texture coordinate
 in vec2 texCoord;
 
+// Camera viewing position
 uniform vec3 uViewPos;
+
+
 uniform Material material;
 
+// Light variables
 #define MAX_LIGHTS_CONSTANT 16
 uniform int number_lights;                                 // Number of lights to process
 uniform Light lights[MAX_LIGHTS_CONSTANT];

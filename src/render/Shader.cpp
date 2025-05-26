@@ -12,7 +12,7 @@ std::unordered_map<std::string, std::shared_ptr<Shader>> Shader::_shadersCache =
 
 
 Shader::Shader(const std::string& name, const std::string& vertexShaderSource, const std::string& fragmentShaderSource){
-
+    _debugName = name;
     _shaderUID = 0;
 
     _shaderSources[GL_VERTEX_SHADER] = LoadFromFile(vertexShaderSource);
@@ -21,7 +21,21 @@ Shader::Shader(const std::string& name, const std::string& vertexShaderSource, c
     _filePaths[GL_VERTEX_SHADER] = vertexShaderSource;
     _filePaths[GL_FRAGMENT_SHADER] = fragmentShaderSource;
 
+    // std::cout << "Shader constructor called for " << name << std::endl;
+    CompileShaderProgram();
+}
+
+Shader::Shader(const std::string& name, const std::string& vertexShaderSource, const std::string& fragmentShaderSource, const std::string& geometryShaderSource){
     _debugName = name;
+    _shaderUID = 0;
+
+    _shaderSources[GL_VERTEX_SHADER] = LoadFromFile(vertexShaderSource);
+    _shaderSources[GL_FRAGMENT_SHADER] = LoadFromFile(fragmentShaderSource);
+    _shaderSources[GL_GEOMETRY_SHADER] = LoadFromFile(geometryShaderSource);
+
+    _filePaths[GL_VERTEX_SHADER] = vertexShaderSource;
+    _filePaths[GL_FRAGMENT_SHADER] = fragmentShaderSource;
+    _filePaths[GL_GEOMETRY_SHADER] = geometryShaderSource;
 
     CompileShaderProgram();
 }
@@ -39,7 +53,6 @@ std::shared_ptr<Shader> Shader::LoadShader(const std::string& name, const std::s
 {
     const std::string key = vertexShaderPath + "__" + fragmentShaderPath;
 
-    // Check if its contained in the cache
     // std::unordered_map<std::string,std::shared_ptr<Shader>>::iterator
     auto cacheIterator = _shadersCache.find(key);
 
@@ -47,12 +60,26 @@ std::shared_ptr<Shader> Shader::LoadShader(const std::string& name, const std::s
         return cacheIterator->second;
     }
 
-    // Otherwise, if has not been stored in cache, create a new one, cache it and return it
     std::shared_ptr<Shader> shader = std::make_shared<Shader>(name, vertexShaderPath, fragmentShaderPath);
     _shadersCache.insert( {key,shader});
     return shader;
 }
 
+// Static method to load shaders with geometry shader
+std::shared_ptr<Shader> Shader::LoadShader(const std::string& name, const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath)
+{
+    const std::string key = vertexShaderPath + "__" + fragmentShaderPath + "__" + geometryShaderPath;
+
+    auto cacheIterator = _shadersCache.find(key);
+
+    if (cacheIterator != _shadersCache.end()){
+        return cacheIterator->second;
+    }
+
+    std::shared_ptr<Shader> shader = std::make_shared<Shader>(name, vertexShaderPath, fragmentShaderPath, geometryShaderPath);
+    _shadersCache.insert( {key,shader});
+    return shader;
+}
 
 void Shader::Debug()
 {

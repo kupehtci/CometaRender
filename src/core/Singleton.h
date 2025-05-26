@@ -39,7 +39,6 @@ public:
         if(!instance){
             Create();
             return instance;
-//            return nullptr; // in this case if instance is not initialized, return nullprt
         }
         else{
             return instance;

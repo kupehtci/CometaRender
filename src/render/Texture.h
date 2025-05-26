@@ -43,6 +43,7 @@ public:
 
 public:
 
+	[[nodiscard]] uint32_t GetUID() const { return _uid; }
 	inline uint32_t GetWidth() { return _width; }
 	inline uint32_t GetHeight() { return _height;  }
 	inline glm::vec2 GetSize() { return glm::vec2(_width, _height); }

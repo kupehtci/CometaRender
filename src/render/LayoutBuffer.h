@@ -96,6 +96,11 @@ public:
 	* Debug function that print by console the properties of each layout within the LayoutBuffer
 	*/
 	void Debug() const;
+
+	[[nodiscard]] std::string ToString() const;
+
+	// --------- GETTERS AND SETTERS ---------
+	uint32_t GetSize() const { return _size; }
 };
 
 #endif // AURAGL_LAYOUTBUFFER_H

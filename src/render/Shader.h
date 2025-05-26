@@ -30,24 +30,16 @@ private:
 
 public:
 
-    /**
-     * CONSTRUCTOR
-     * Create a shader program composed of a Vertex and Fragment shader references by its source.
-     * @param name (std::string) Debug name assigned to the shader
-     * @param vertexShaderSource (const std::string&) Vertex Shader source's path
-     * @param fragmentShaderSource (const std::string&) Fragment Shader source's path
-     */
-    Shader(const std::string& name, const std::string& vertexShaderSource, const std::string& fragmentShaderSource );
-
-    /**
-     * Default destructor of the shader
-     */
+    Shader(const std::string& name, const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
+    Shader(const std::string& name, const std::string& vertexShaderSource, const std::string& fragmentShaderSource, const std::string& geometryShaderSource);
     ~Shader();
 
     // ------------ CACHED METHODS ------------
+    // Chached methods are the most recomendable way to create and load a shader program.
+    // Invoked as an static method --> Shader shader = Shader::LoadShader(...)
 
     static std::shared_ptr<Shader> LoadShader(const std::string& name, const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
-
+    static std::shared_ptr<Shader> LoadShader(const std::string& name, const std::string& vertexShaderPath, const std::string& fragmentShaderPath, const std::string& geometryShaderPath);
     static void Debug();
 
     // ------------ UNIFORMS METHODS ------------
@@ -155,9 +147,9 @@ public:
     // ----------------- GETTERS AND SETTERS -----------------
 
 public:
-    inline std::string GetSourceCode(GLenum shaderType){ return _shaderSources[GL_FRAGMENT_SHADER]; }
-    inline std::string GetFilePath(GLenum shaderType){ return _filePaths[shaderType];}
-    inline unsigned int GetShaderUID() const{ return _shaderUID; }
+    [[nodiscard]] std::string GetSourceCode(GLenum shaderType){ return _shaderSources[shaderType]; }
+    [[nodiscard]] std::string GetFilePath(GLenum shaderType){ return _filePaths[shaderType];}
+    [[nodiscard]] unsigned int GetShaderUID() const{ return _shaderUID; }
     [[nodiscard]] inline bool IsCompiled() const{ return _isCompiled; }
 
 };
