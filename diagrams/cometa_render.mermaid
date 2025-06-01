@@ -1,0 +1,265 @@
+---
+config:
+  theme: mc
+---
+
+%%{
+  init: {
+    'theme': '%%base%%',
+    'themeVariables': {
+      'primaryColor': '#6606d6',
+      'primaryTextColor': '#fff',
+      'primaryBorderColor': '#7C0000',
+      'lineColor': '#a591bf',
+      'secondaryColor': '#a6a0ad',
+      'tertiaryColor': '#fff'
+    }
+  }
+}%%
+
+classDiagram
+    direction TB
+
+    class FACE_CULLING_MODE{
+         <<enumeration>>
+        FACE_CULLING_NONE
+        FACE_CULLING_CLOCKWISE
+        FACE_CULLING_COUNTER_CLOCKWISE
+    }
+    class Renderer {
+        - Window* _window
+        - _depthCulling : bool
+        - _faceCullingMode : FACE_CULLING_MODE
+        + Init()
+        + Update()
+        + Close()
+        + Render()
+        + GetWindow()
+        + SetDepthCulling(bool)
+        + SetFaceCulling(FACE_CULLING_MODE)
+    }
+
+    class Renderable{
+        - _mesh : std::shared_ptr<Mesh>
+        - _material : std::shared_ptr<Material>
+        - _transform : Transform*
+
+        + GetMesh() : std::shared_ptr<Mesh>
+        + GetMaterial() : std::shared_ptr<Material>
+        + GetTransform() : Transform
+        + SetMesh(std::shared_ptr<Mesh> mesh)
+        + SetMaterial(std::shared_ptr<Material> material)
+        + SetTransform(Transform* transform) : void
+        + DoesCastShadow() : bool
+        + SetCastShadow(bool value) : void
+    }
+
+    class Window {
+        - _window : GLFWwindow*
+        - _resolution : vec2
+        - _title : char
+        + Init()
+        + Update()
+        + Close()
+        + GetCurrentResolution()
+        + GetGlfwWindow()
+    }
+    class Camera {
+        - _position     : vec3
+        - _direction    : vec3
+        - _up           : vec3
+        - _right        : vec3
+        - _fov          : float
+        - _pitch        : float
+        - _yaw          : float
+        - _near         : float
+        - _far          : float
+        - _movementSpeed : float
+        - _sensitivity : float
+        + OnUpdate()
+        + GetPosition() : vec3
+        + GetDirection() : vec3
+        + GetUp() : vec3
+        + GetRight() : vec3
+        + GetNear() : float
+        + GetFar() : float
+        + GetFov() : float
+        + GetViewMatrix() : mat4
+        + GetProjectionMatrix() : mat4
+        + GetViewProyection() : mat4
+    }
+    class Material {
+        - _color : vec3
+        - _ambient : vec3
+        - _diffuse : vec3
+        - _specular : vec3
+        - _shininess : float
+        - _shader : Shader*
+        - _diffuseMap : Texture*
+        - _specularMap : Texture*
+        - _emissionMap : Texture*
+        + Bind()
+        + LoadShader()
+        + SetTextures()
+    }
+    class Mesh {
+        - _vao : std::shared_ptr~VertexArray~
+        - _vertices : vector~float~
+        - _indices : vector~uint32~
+        - _numVertices : uint32_t
+        - _numIndices : uint32_t
+        + AddVertices(float* , uint32_t ) : void
+        + AddIndices(uint32_t*, uint32_t ) : void
+        + Build() : void
+        + Bind() : void
+        + Draw() : void
+        + Unbind() : void
+    }
+    class Shader {
+        - _shaderUID : uint32_t
+        - _shaderSources : std::unordered_map~GLenum, std::string~
+        - _filePaths : std::unordered_map~GLenum, std::string~
+        - _debugName : string
+        - _isCompiled : bool
+        + LoadShader( name,vertexShaderPath, fragmentShaderPath) static std::shared_ptr<Shader>
+        + Debug() static void
+
+        + SetBool(variableName, value) void
+        + SetFloat(variableName, value) void
+        + SetFloat2(variableName, value) void
+        + SetFloat3(variableName, value) void
+        + SetFloat4(variableName, value) void
+        + SetInt(variableName, value)  void
+        + SetIntArray(variableName, values,count) void
+        + SetMatrix4(variableName, value) void
+        + LoadFromFile(filePath) std::string
+        + CompileShader(shaderType) unsigned int
+        + void CompileShaderProgram()
+        + void Bind()
+        + void Unbind()
+        + void Delete()
+    }
+    class Texture {
+        - _uid : uint32_t
+        - _width : uint32_t
+        - _height : uint32_t
+        - _channels : uint8_t
+        - _path : string
+        + Bind()
+        + Load()
+        + Delete()
+    }
+    class VertexArray {
+        - vector~std::shared_ptr~VertexBuffer~~ _vertexBuffers
+        - std::shared_ptr~IndexBuffer~ _indexBuffer
+        - LayoutBuffer _layoutBuffer
+
+        + Bind()
+        + Unbind()
+        + CreateVertexBuffer(float* vertices, uint32_t size)
+        + CreateIndexBuffer(uint32_t* indices, uint32_t size)
+        + AddVertexBuffer(VertexBuffer&)
+        + AddIndexBuffer(IndexBuffer&)
+        + GetLayoutBuffer()
+        + SetLayoutBuffer()
+    }
+    class Buffer {
+        <<abstract>>
+        # _uid : uint32_t
+
+        + Bind()*
+        + Unbind()*
+        + GetUid()
+    }
+    class VertexBuffer {
+        + Bind()
+        + Unbind()
+    }
+    class IndexBuffer {
+        - _count : uint32_t
+        + GetCount()
+        + Bind()
+        + Unbind()
+    }
+    class LayoutBuffer {
+        - _layouts : vector~Layout~
+        - _size : uint32_t
+        + LayoutBuffer(std::initializer_list~Layout~)
+        + AddLayout()
+        + GetLayouts()
+    }
+
+    class Layout{
+        - _name : std::string
+        - _position : uint32_t
+        - _type : DataType
+        - _size : uint32_t
+        - _offset : uint32_t
+
+        + Layout(position, type, name)
+    }
+
+    class DataType{
+        <<enumeration>>
+        None
+        Float
+        Float2
+        Float3
+        Float4
+        Mat3
+        Mat4
+        Int
+        Int2
+        Int3
+        Int4
+        Bool
+    }
+
+    <<abstract>> Buffer
+
+    Renderer --* Window : contains
+    Renderer --* FACE_CULLING_MODE : contains
+    Material --* Shader : contains
+    Material --* Texture : contains
+    Mesh --* VertexArray : contains
+    VertexArray --* VertexBuffer : contains
+    VertexArray --* IndexBuffer : contains
+    VertexArray --* LayoutBuffer : contains
+    Buffer <|-- VertexBuffer : inherits
+    Buffer <|-- IndexBuffer : inherits
+    Buffer <|-- VertexArray : inherits
+    LayoutBuffer *-- Layout
+
+    LayoutBuffer ..> DataType
+
+
+    %% Extern classes
+    namespace glm {
+        class mat4{
+
+        }
+
+        class vec3{
+%%            + x : float
+%%            + y : float
+%%            + z : float
+        }
+
+        class vec2{
+%%            + x : float
+%%            + y : float
+        }
+
+        class GLenum{
+            <<enumeration>>
+        }
+
+    }
+
+    Window --* vec2
+    Camera ..> mat4
+    Camera ..> vec3
+    Material ..> vec3
+    Shader ..o GLenum
+
+

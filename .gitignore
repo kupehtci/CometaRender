@@ -1,0 +1,24 @@
+**/bin
+**/bin-int
+
+
+.vscode/
+.vscode/*
+
+*.make
+Makefile
+
+# Old files
+*_old*
+
+
+# Visual studio files
+.vs/
+*.sln
+*.vcxproj*
+
+
+.idea/
+
+# MacOS files
+.DS_Store
