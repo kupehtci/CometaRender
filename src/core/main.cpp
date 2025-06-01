@@ -40,6 +40,21 @@ int main() {
     cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
     cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
+    Transform* cubeTransform2 = new Transform();
+    cubeTransform->position = glm::vec3(0.0, 0.0, -5.0f);
+    cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+    cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    Transform* cubeTransform3 = new Transform();
+    cubeTransform->position = glm::vec3(0.0, 0.0, -5.0f);
+    cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+    cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    Transform* cubeTransform4 = new Transform();
+    cubeTransform->position = glm::vec3(0.0, 0.0, -5.0f);
+    cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+    cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
     // Create material
     auto brickMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f),
                                     glm::vec3(1.0f, 0.5f, 0.31f),
@@ -55,7 +70,10 @@ int main() {
     "src/render/shaders/blinn_phong_shader.frag" );
 
     // Create a renderable object
-    std::shared_ptr<Renderable> cubeRenderable = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform);
+    std::shared_ptr<Renderable> cubeRenderable1 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform);
+    std::shared_ptr<Renderable> cubeRenderable2 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform2);
+    std::shared_ptr<Renderable> cubeRenderable3 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform3);
+    std::shared_ptr<Renderable> cubeRenderable4 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform4);
 
 
     // Create point light
@@ -104,7 +122,13 @@ int main() {
 
     auto floorRenderable = _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, floorTransform);
 
-    // Second floot
+    // Second floor
+    auto floorTransform2 = new Transform();
+    floorTransform2->position = glm::vec3(-1.0f, 7.1f, -16.0f);
+    floorTransform2->scale = glm::vec3(-20.0f, -1.0f, -20.0f);
+    floorTransform2->rotation = glm::vec3(-124.0f, 0.0f, 0.0f);
+
+    auto floorRenderable2 = _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, floorTransform2);
 
     // Directional Light
     auto directionalLightTransform = new Transform();
