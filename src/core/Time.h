@@ -13,6 +13,7 @@ class Time : public SingletonManager<Time> {
 private: 
 	float _deltaTime = 0.0f;
 	float _timeScale = 0.0f;
+	float _accumulatedTime = 0.0f;
 
 
 	// utils
@@ -35,6 +36,8 @@ public:
 	float inline static GetDeltaTime() { return Time::GetInstancePtr()->_deltaTime; }
 
 	float inline static GetTimeScale() { return Time::GetInstancePtr()->_timeScale; }
+
+	float inline static GetAccumulatedTime() { return Time::GetInstancePtr()->_accumulatedTime; }
 };
 
 

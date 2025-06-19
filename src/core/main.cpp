@@ -34,47 +34,40 @@ int main() {
     Camera* currentCamera = new Camera();
     _renderer->SetCamera(currentCamera);
 
-    // Create a transform for the cube
-    Transform* cubeTransform = new Transform();
-    cubeTransform->position = glm::vec3(0.0, 0.0, -5.0f);
-    cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    Transform* cubeTransform2 = new Transform();
-    cubeTransform->position = glm::vec3(0.0, 0.0, -5.0f);
-    cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    Transform* cubeTransform3 = new Transform();
-    cubeTransform->position = glm::vec3(0.0, 0.0, -5.0f);
-    cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    Transform* cubeTransform4 = new Transform();
-    cubeTransform->position = glm::vec3(0.0, 0.0, -5.0f);
-    cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    // Create material
-    auto brickMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f),
-                                    glm::vec3(1.0f, 0.5f, 0.31f),
-                                    glm::vec3(1.0f, 0.5f, 0.31f),
-                                    glm::vec3(0.5f, 0.5f, 0.5f),
-                                    64.0f,
-                                    "resources/bricks_diffuse_map.jpg",
-                                    "resources/bricks_specular_map.jpg",
-                                    "resources/black.jpg");
+    // Create material for cubes
+    auto brickMaterial = std::make_shared<Material>(
+        glm::vec3(1.0f, 1.0f, 1.0f), // color
+        glm::vec3(1.0f, 0.5f, 0.31f), // ambient
+        glm::vec3(1.0f, 0.5f, 0.31f), // diffuse
+        glm::vec3(0.5f, 0.5f, 0.5f),  // specular
+        64.0f,
+        "resources/bricks_diffuse_map.jpg",
+        "resources/bricks_specular_map.jpg",
+        "resources/black.jpg"
+    );
 
     brickMaterial->LoadShader("Blinn phong shader",
         "src/render/shaders/blinn_phong_shader.vert",
-    "src/render/shaders/blinn_phong_shader.frag" );
+        "src/render/shaders/blinn_phong_shader.frag" );
 
-    // Create a renderable object
-    std::shared_ptr<Renderable> cubeRenderable1 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform);
-    std::shared_ptr<Renderable> cubeRenderable2 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform2);
-    std::shared_ptr<Renderable> cubeRenderable3 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform3);
-    std::shared_ptr<Renderable> cubeRenderable4 = _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform4);
+    // Wave animation setup
+    std::vector<Transform*> cubeTransforms;
+    const int gridSize = 12;
+    const float spacing = 1.2f;
 
+    for (int x = 0; x < gridSize; ++x) {
+        for (int z = 0; z < gridSize; ++z) {
+            float xpos = (x - gridSize / 2) * spacing;
+            float zpos = (z - gridSize / 2) * spacing;
+            float ypos = 0.5f; // base height
+            Transform* cubeTransform = new Transform();
+            cubeTransform->position = glm::vec3(xpos, ypos, zpos - 5.0f);
+            cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+            cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
+            _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform);
+            cubeTransforms.push_back(cubeTransform);
+        }
+    }
 
     // Create point light
     Transform* lightTransform = new Transform();
@@ -94,6 +87,7 @@ int main() {
                                     "resources/white.jpg",
                                     "resources/white.jpg",
                                     "resources/black.jpg");
+                                    
     lightMaterial->LoadShader("Light Shader","src/render/shaders/light_shader.vert", "src/render/shaders/light_shader.frag");
     auto lightMesh = Mesh::CreateSphere();
 
@@ -134,22 +128,30 @@ int main() {
     auto directionalLightTransform = new Transform();
     auto directionalLight = _renderer->CreateDirectionalLight(directionalLightTransform);
 
+
     // Main rendering loop
     bool _applicationRunning = true;
     while (_applicationRunning)
     {
+        float t = _time->GetDeltaTime();
+        // Animate cubes in a wave
+        int idx = 0;
+        for (int x = 0; x < gridSize; ++x) {
+            for (int z = 0; z < gridSize; ++z) {
+                float phase = (float)x * 0.5f + (float)z * 0.5f;
+                float amplitude = 3.5f;
+                cubeTransforms[idx]->position.y = 0.5f + amplitude * sinf(_time->GetAccumulatedTime() + phase);
+                idx++;
+            }
+        }
         _renderer->Update();
         _input->Update();
         _time->Update();
         _uimanager->Update();
-
-        if (Input::IsKeyPressed(GLFW_KEY_ESCAPE) ||
-            Renderer::ShouldClose()){ _applicationRunning = false;}
-
+        if (Input::IsKeyPressed(GLFW_KEY_ESCAPE) || Renderer::ShouldClose()) { _applicationRunning = false; }
         _renderer->Render(); 
     }
 
-    delete cubeTransform;
     delete lightTransform;
     delete currentCamera;
 

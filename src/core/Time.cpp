@@ -15,6 +15,7 @@ void Time::Init() {
 void Time::Update() {
 
 	UpdateDeltaTime(); 
+	_accumulatedTime += _deltaTime * _timeScale;
 }
 
 void Time::Close() {
