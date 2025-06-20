@@ -184,56 +184,51 @@ void Renderer::Update(){
         // For now, only process the first point light
         if (!_pointLights.empty())
         {
-            std::cout << "Generate point light shadow cubemap" << std::endl;
 
             auto pointLight = _pointLights[0];
             Transform* lightTransform = pointLight->GetTransform();
             
-            // Bind the framebuffer
             _pointShadowFrameBuffer->Bind();
-            
-            // Clear the depth buffer
+        
             glClear(GL_DEPTH_BUFFER_BIT);
             
-            // Set light position uniform
             _pointShadowMapShader->SetFloat3("lightPos", lightTransform->position);
             
             // Create shadow transformation matrices for each face of the cubemap
             glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, POINT_LIGHT_FAR_PLANE);
             std::vector<glm::mat4> shadowTransforms;
             
-            // Right face (+X)
+            // Right face 
             shadowTransforms.push_back(shadowProj * 
                 glm::lookAt(lightTransform->position, 
                             lightTransform->position + glm::vec3(1.0f, 0.0f, 0.0f), 
                             glm::vec3(0.0f, -1.0f, 0.0f)));
-            // Left face (-X)
+            // Left face 
             shadowTransforms.push_back(shadowProj * 
                 glm::lookAt(lightTransform->position, 
                             lightTransform->position + glm::vec3(-1.0f, 0.0f, 0.0f), 
                             glm::vec3(0.0f, -1.0f, 0.0f)));
-            // Top face (+Y)
+            // Top face 
             shadowTransforms.push_back(shadowProj * 
                 glm::lookAt(lightTransform->position, 
                             lightTransform->position + glm::vec3(0.0f, 1.0f, 0.0f), 
                             glm::vec3(0.0f, 0.0f, 1.0f)));
-            // Bottom face (-Y)
+            // Bottom face 
             shadowTransforms.push_back(shadowProj * 
                 glm::lookAt(lightTransform->position, 
                             lightTransform->position + glm::vec3(0.0f, -1.0f, 0.0f), 
                             glm::vec3(0.0f, 0.0f, -1.0f)));
-            // Front face (+Z)
+            // Front face 
             shadowTransforms.push_back(shadowProj * 
                 glm::lookAt(lightTransform->position, 
                             lightTransform->position + glm::vec3(0.0f, 0.0f, 1.0f), 
                             glm::vec3(0.0f, -1.0f, 0.0f)));
-            // Back face (-Z)
+            // Back face 
             shadowTransforms.push_back(shadowProj * 
                 glm::lookAt(lightTransform->position, 
                             lightTransform->position + glm::vec3(0.0f, 0.0f, -1.0f), 
                             glm::vec3(0.0f, -1.0f, 0.0f)));
-            
-            // Set the shadow matrices in the shader
+                            
             for (unsigned int j = 0; j < 6; ++j)
             {
                 _pointShadowMapShader->SetMatrix4("shadowMatrices[" + std::to_string(j) + "]", shadowTransforms[j]);
@@ -272,7 +267,6 @@ void Renderer::Update(){
     // Render each object with lighting
     for (auto& renderable : _renderables)
     {
-        std::cout << "Rendering object" << std::endl;
         Transform* transform = renderable->GetTransform();
 
         renderable->GetMaterial()->Bind();

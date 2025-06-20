@@ -18,6 +18,7 @@ class UIManager : public SingletonManager<UIManager> {
 private:
     bool _mainWindowOpen = true;
     bool _sceneHierarchyOpen = false;
+    bool _showDemoWindow = false;
     ImVec2 _thumbnailSize = ImVec2(128, 128);
 
 public:

@@ -5,33 +5,58 @@
 #include <vector>
 #include "debug/Assertion.h"
 
+/**
+ * SparseSet is a data structure that allows for fast access to elements by index. 
+ * Can only contains unique elements, and allows for fast insertion and deletion adn they need to have a reference or an ID to be accessed.
+ * 
+ */
 template<typename T>
 class SparseSet {
 
 protected: 
+	// Dense vector contains the actual data, while sparse vector contains the index of the dense vector
 	std::vector<T> _dense;
+
+	// Dense Index vector contains the index of the dense vector, which is used to quickly access the dense vector
 	std::vector<int> _denseIndex;
+
+	// Sparse vector contains the index of the dense vector, and is used to quickly check if an index is contained
 	std::vector<int> _sparse;
 
-	size_t _size = 0;					// Number of elements within the Sparse Set. Its also a pointer to the end of the sparse set
-	size_t _capacity = 100;				// Maximum capacity of the Sparse.
-	size_t _denseCapacity = 100;		// Maximum capacity of the Dense.
+	// Number of elements within the Sparse Set. Its also a pointer to the end of the sparse set
+	size_t _size = 0;				
 
-	size_t _lastInsertedSparse = 0;		// Keeps track of the last item inserted in the sparse. This is helpful for popping items (removing efficiently)
+	// Maximum capacity of the Sparse
+	size_t _capacity = 1000;		
+	
+	// Maximum capacity of the Dense
+	size_t _denseCapacity = 1000;			
+
+	// Keeps track of the last item inserted in the sparse. 
+	// optimizes the poping and the swapping of element to be removed with the last element in the dense vector
+	size_t _lastInsertedSparse = 0;		
 
 
 public: 
+
+	/**
+	 * SparseSet default constructor
+	 */
 	SparseSet() {
 		_size = 0;
 		_capacity = 100;
 		_denseCapacity = 100;
 
 		_dense.reserve(_denseCapacity);
-		//_dense = std::vector<T>(_denseCapacity);
-		_denseIndex.reserve(_denseCapacity);  // = std::vector<int>(_denseCapacity);
-		_sparse = std::vector<int>(_capacity, -1);		// initialize with all values to -1. Used for checking an empty value
+
+		_denseIndex.reserve(_denseCapacity);  
+		// initialize with all values to -1. Used for checking an empty value
+		_sparse = std::vector<int>(_capacity, -1);		
 	}
 
+	/**
+	 * Add an item to the SparseSet at a specific index.
+	 */
 	void Add(size_t index, const T& value) {
 
 		if (Contains(index))
@@ -62,6 +87,11 @@ public:
 		_size++;
 	}
 
+	/**
+	 * Remove an item from the SparseSet at a specific index.
+	 * This method will swap the item to be removed with the last item in the dense vector
+	 * @param index Index in the sparse set to get the item from.
+	 */
 	void Pop(size_t index) {
 		if (!Contains(index)) return;
 
@@ -76,6 +106,10 @@ public:
 		_size--;
 	}
 
+	/**
+	 * Get the item at a specific index in the SparseSet.
+	 * @param index Index in the sparse set to get the item from.
+	 */
 	T* Get(const size_t index) {
 		if (!Contains(index)) {
 			return nullptr;
@@ -84,15 +118,29 @@ public:
 		return &_dense[_sparse[index]];
 	}
 
+	/**
+	 * Get the first item in the SparseSet.
+	 * @return Pointer to the first item in the dense vector, or nullptr if the sparse set is empty.
+	 */
 	T* GetFirst()
 	{
 		return _size == 0 ? nullptr : &_dense[0];
 	}
 
+	/**
+	 * Get the last item in the SparseSet.
+	 * @return Pointer to the last item in the dense vector, or nullptr if the sparse set is empty.
+	 */
+	[[nodiscard]]
 	T* GetLast() {
 		return _size == 0 ? nullptr : &_dense[_size - 1];
 	}
 	
+	/**
+	 * Check if the SparseSet contains a specific index.
+	 * @param value Index to check if its contained in the sparse
+	 * @return true if the index is contained in the sparse, false otherwise.
+	 */
 	[[nodiscard]] bool Contains (const size_t value) const {
 		return (value < _capacity && _sparse[value] != -1);
 	}
@@ -113,21 +161,39 @@ public:
 		return false;
 	}
 
+	/**
+	 * Clear the SparseSet by removing all elements
+	 */
 	void Clear() {
 		_size = 0;
 	}
 
+	/**
+	 * Get the index of the dense vector that corresponds to the given sparse index.
+	 * @param i Index in the sparse set to get the dense index from.
+	 * @return The dense index corresponding to the given sparse index.
+	 */
+	[[nodiscard]]
 	int GetDenseIndex(size_t i)
 	{
 		return _denseIndex[i];
 	}
 
+	/**
+	 * Print the contents of the SparseSet gettign the sparse and the dense itemsto the console.
+	 * IMPORTANT! the T class must have an implemented operator<< to be printed
+	 */
+	[[nodiscard]]
 	void Print() const {
 		for (size_t i = 0; i < _size; i++) {
 			std::cout << "SparseSet [" << i << "] : " << _dense[i] << " dense capacity:  " << std::endl;
 		}
 	}
 
+	/**
+	 * Print the index of the SparseSet, showing which sparse index contains which dense index.
+	 */
+	[[nodiscard]]
 	void PrintIndex() const {
 		std::cout << "SparseSet print index: " << std::endl;
 		for (size_t i = 0; i < _capacity; i++) {
@@ -155,13 +221,26 @@ public:
 
 	// --------- GETTERS AND SETTERS ---------
 public: 
+
+	/**
+	 * Get the size of the SparseSet
+	 */
 	[[nodiscard]] size_t Size() const { return _size;  }
+
+	/**
+	 * Get the capacity of the SparseSet
+	 */
 	[[nodiscard]] size_t Capacity() const{ return _capacity;  }
+
+	/**
+	 * Get the dense capacity of the SparseSet
+	 */
 	[[nodiscard]] size_t DenseCapacity() const{ return _denseCapacity;  }
 
 	// ITERATION IMPLEMENTATION
 	// This allows to use the class with a for each loop, example:
 	// for (auto element : example_sparse_set){} ...
+	// 
 	typename std::vector<T>::iterator begin() {return _dense.begin();}
 	typename std::vector<T>::iterator end() {return _dense.begin() + _size;}
 

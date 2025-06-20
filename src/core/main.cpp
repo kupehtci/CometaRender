@@ -46,14 +46,14 @@ int main() {
         "resources/black.jpg"
     );
 
-    brickMaterial->LoadShader("Blinn phong shader",
+    brickMaterial->LoadShader("Movement Blinn Phong Shader",
         "src/render/shaders/blinn_phong_shader.vert",
         "src/render/shaders/blinn_phong_shader.frag" );
 
     // Wave animation setup
     std::vector<Transform*> cubeTransforms;
-    const int gridSize = 12;
-    const float spacing = 1.2f;
+    const int gridSize = 15;
+    const float spacing = 0.5f;
 
     for (int x = 0; x < gridSize; ++x) {
         for (int z = 0; z < gridSize; ++z) {
@@ -63,7 +63,7 @@ int main() {
             Transform* cubeTransform = new Transform();
             cubeTransform->position = glm::vec3(xpos, ypos, zpos - 5.0f);
             cubeTransform->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-            cubeTransform->scale = glm::vec3(1.0f, 1.0f, 1.0f);
+            cubeTransform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
             _renderer->CreateRenderable(Mesh::CreateBox(0.5f), brickMaterial, cubeTransform);
             cubeTransforms.push_back(cubeTransform);
         }
@@ -95,10 +95,12 @@ int main() {
     std::shared_ptr<Renderable> lightRenderable = _renderer->CreateRenderable(lightMesh, lightMaterial, lightTransform);
     lightRenderable->SetCastShadow(false);
 
+
+
     // Floor renderable
     Transform* floorTransform = new Transform();
-    floorTransform->position = glm::vec3(-1.0f, -1.0f, -1.0f);
-    floorTransform->scale = glm::vec3(20.0f, 20.0f, 20.0f);
+    floorTransform->position = glm::vec3(0.0f, -1.0f, -5.0f);
+    floorTransform->scale = glm::vec3(20.0f, 20.0f, 20.0f); // Increased size
 
     auto floorMaterial = std::make_shared<Material>(glm::vec3(0.66f, 0.75f, 0.66f),
                                     glm::vec3(1.0f, 0.5f, 0.31f),
@@ -111,18 +113,45 @@ int main() {
 
     floorMaterial->LoadShader("Blinn phong shader",
         "src/render/shaders/blinn_phong_shader.vert",
-    "src/render/shaders/blinn_phong_shader.frag" );
+        "src/render/shaders/blinn_phong_shader.frag" );
 
 
     auto floorRenderable = _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, floorTransform);
 
-    // Second floor
-    auto floorTransform2 = new Transform();
-    floorTransform2->position = glm::vec3(-1.0f, 7.1f, -16.0f);
-    floorTransform2->scale = glm::vec3(-20.0f, -1.0f, -20.0f);
-    floorTransform2->rotation = glm::vec3(-124.0f, 0.0f, 0.0f);
-
-    auto floorRenderable2 = _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, floorTransform2);
+    // Create a room with walls
+    float wallSize = 20.0f;
+    float halfWall = wallSize * 0.5f;
+    float roomHeight = 18.0f;
+    // Back 
+    Transform* backWall = new Transform();
+    backWall->position = glm::vec3(0.0f, halfWall - 1.0f, -5.0f - halfWall);
+    backWall->scale = glm::vec3(wallSize, wallSize, wallSize);
+    backWall->rotation = glm::vec3(-90.0f, 180.0f, 0.0f);
+    _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, backWall);
+    // Left 
+    Transform* leftWall = new Transform();
+    leftWall->position = glm::vec3(-halfWall, halfWall - 1.0f, -5.0f);
+    leftWall->scale = glm::vec3(wallSize, wallSize, wallSize);
+    leftWall->rotation = glm::vec3(0.0f, -90.0f, 90.0f);
+    _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, leftWall);
+    // Right
+    Transform* rightWall = new Transform();
+    rightWall->position = glm::vec3(halfWall, halfWall - 1.0f, -5.0f);
+    rightWall->scale = glm::vec3(wallSize, wallSize, wallSize);
+    rightWall->rotation = glm::vec3(0.0f, -90.0f, -90.0f);
+    _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, rightWall);
+    // Front
+    Transform* frontWall = new Transform();
+    frontWall->position = glm::vec3(0.0f, halfWall - 1.0f, -5.0f + halfWall);
+    frontWall->scale = glm::vec3(wallSize, wallSize, wallSize);
+    frontWall->rotation = glm::vec3(-90.0f, 0.0f, 180.0f);
+    _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, frontWall);
+    // Top
+    Transform* ceiling = new Transform();
+    ceiling->position = glm::vec3(0.0f, roomHeight - 1.0f, -5.0f);
+    ceiling->scale = glm::vec3(wallSize, wallSize, wallSize);
+    ceiling->rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+    _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, ceiling);
 
     // Directional Light
     auto directionalLightTransform = new Transform();
@@ -133,17 +162,22 @@ int main() {
     bool _applicationRunning = true;
     while (_applicationRunning)
     {
-        float t = _time->GetDeltaTime();
-        // Animate cubes in a wave
+        float t = _time->GetAccumulatedTime();
+        // Set uTime uniform for GPU-side animation
+        brickMaterial->GetShader()->Bind();
+        brickMaterial->GetShader()->SetFloat("uTime", t);
+        // // Animate cubes in a wave
+
         int idx = 0;
         for (int x = 0; x < gridSize; ++x) {
             for (int z = 0; z < gridSize; ++z) {
                 float phase = (float)x * 0.5f + (float)z * 0.5f;
-                float amplitude = 3.5f;
+                float amplitude = 0.5f;
                 cubeTransforms[idx]->position.y = 0.5f + amplitude * sinf(_time->GetAccumulatedTime() + phase);
                 idx++;
             }
         }
+        
         _renderer->Update();
         _input->Update();
         _time->Update();

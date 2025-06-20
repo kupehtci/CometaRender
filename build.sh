@@ -13,6 +13,7 @@
 
 # Print the usage of the script
 print_usage() {
+  echo "[BUILD] "
   echo "Usage: "
   echo "    -t   Indicate the type of the OS to compile for"
   echo "         Valid Options are: "
@@ -35,45 +36,47 @@ done
 
 
 if [ "$type" = "" ]; then
-    echo "Type has not been specified, use -t flag to indicate a valid OS to compile the project for"
+    echo "[BUILD] Type has not been specified, use -t flag to indicate a valid OS to compile the project for"
     exit 1
 fi
 
 # Windows compilation for Visual Studio 2022
 compile_for_windows_vstudio() {
-    echo "Compiling a Visual Studio Solution for windows using premake5"
+    echo "[BUILD] Compiling a Visual Studio Solution for windows using premake5"
     ./premake5.exe clean
     rm *.sln
     rm *.vcxproj*
-    ./premake5.exe vs2022 --os=windows 
+    ./premake5.exe vs2022 --os=windows
 }
 
 # Build windows .sln using MSBuild
-build_for_windows_msbuild(){
-    # This function need to use the MSBuild.exe file ubicated in the system to run the Solution file of the proyect
-    C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe .\Aura.sln
-}
+#build_for_windows_msbuild(){
+#    # This function need to use the MSBuild.exe file ubicated in the system to run the Solution file of the proyect
+#    C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe .\Aura.sln
+#}
+
+echo "============ STARTED BUILDING SCRIPT ============"
 
 # MacOS compilation and execution using Make Files
 compile_for_macos_gmake () {
 
     # Check that Premake5 is installed
     if command -v premake5 > /dev/null 2>&1; then
-        echo "Premake5 is installed"
+        echo "[BUILD] Premake5 is installed"
     else
-        echo "Premake5 is not installed and cannot be compiled without it"
+        echo "[BUILD] Premake5 is not installed and cannot be compiled without it"
         exit 1;
     fi
 
-    echo "Transcription for MacOS using premake5"
+    echo "[BUILD] Transcription for MacOS using premake5 to GMake files"
     
-    premake5 clean
-    premake5 gmake --cc=gcc --os=macosx
+    # premake5 clean
+    ./premake5 gmake --cc=gcc --os=macosx
 
-    echo "Compiling MakeFiles"
+    echo "[BUILD] Compiling MakeFiles"
     make config=debug
 
-    echo "Executing the binary"
+    echo "[BUILD] Executing the binary"
 
     #  take into account that needs to be called from here to set the current path from here
     #  If its called from inside the folder, the current path or called' path is going to be taken from the debug folder
