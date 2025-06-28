@@ -8,6 +8,7 @@
 #include "render/Mesh.h"
 #include "render/Material.h"
 #include "render/Transform.h"
+#include "render/Model.h"
 
 // Base class for all renderable objects
 class Renderable {
@@ -21,6 +22,20 @@ protected:
 public:
     Renderable(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Transform* transform)
         : _mesh(mesh), _material(material), _transform(transform) {}
+
+    // New constructor: load from Model
+    Renderable(const Model& model, size_t meshIndex, Transform* transform)
+        : _transform(transform)
+    {
+        auto meshes = model.GetMeshes();
+        if (meshIndex < meshes.size()) {
+            _mesh = meshes[meshIndex];
+            _material = model.GetMeshMaterial(_mesh);
+        } else {
+            _mesh = nullptr;
+            _material = nullptr;
+        }
+    }
 
     virtual ~Renderable() = default;
 
@@ -36,6 +51,10 @@ public:
 
     bool DoesCastShadow() const { return _castShadow; }
     void SetCastShadow(bool value) { _castShadow = value; }
+
+    bool IsLoaded() const {
+        return _mesh != nullptr && _material != nullptr && _transform != nullptr;
+    }
 };
 
 
