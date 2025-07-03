@@ -5,8 +5,7 @@
 #include "UIManager.h"
 
 void UIManager::Init() {
-  std::cout << "UILayer::Init" << std::endl;
-
+    std::cout << "UILayer::Init" << std::endl;
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -19,79 +18,78 @@ void UIManager::Init() {
     ImGui_ImplGlfw_InitForOpenGL(Renderer::GetInstancePtr()->GetWindow()->GetGlfwWindow(), true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
     ImGui_ImplOpenGL3_Init();
 
-
     ImGuiStyle& style = ImGui::GetStyle();
     ImVec4* colors = style.Colors;
 
     // --- Backgrounds ---
-    colors[ImGuiCol_WindowBg]         = ImVec4(0.09f, 0.10f, 0.13f, 1.00f); // #181A20
-    colors[ImGuiCol_ChildBg]          = ImVec4(0.13f, 0.14f, 0.19f, 1.00f); // #232530
-    colors[ImGuiCol_PopupBg]          = ImVec4(0.13f, 0.14f, 0.19f, 0.98f);
-    colors[ImGuiCol_Border]           = ImVec4(0.18f, 0.20f, 0.25f, 0.60f); // subtle border
+    colors[ImGuiCol_WindowBg]         = ImVec4(0.96f, 0.96f, 0.97f, 1.00f); // #F5F5F7
+    colors[ImGuiCol_ChildBg]          = ImVec4(0.98f, 0.98f, 0.99f, 1.00f); // #FAFAFA
+    colors[ImGuiCol_PopupBg]          = ImVec4(0.98f, 0.98f, 0.99f, 0.98f);
+    colors[ImGuiCol_Border]           = ImVec4(0.80f, 0.82f, 0.85f, 0.60f); // subtle border
     colors[ImGuiCol_BorderShadow]     = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 
     // --- Text ---
-    colors[ImGuiCol_Text]             = ImVec4(0.88f, 0.88f, 0.90f, 1.00f); // #E0E0E0
-    colors[ImGuiCol_TextDisabled]     = ImVec4(0.45f, 0.48f, 0.53f, 1.00f); // muted gray
+    colors[ImGuiCol_Text]             = ImVec4(0.15f, 0.15f, 0.17f, 1.00f); // #262629
+    colors[ImGuiCol_TextDisabled]     = ImVec4(0.55f, 0.57f, 0.60f, 1.00f); // muted gray
 
     // --- Frames & Panels ---
-    colors[ImGuiCol_FrameBg]          = ImVec4(0.16f, 0.18f, 0.23f, 1.00f); // #282A36
-    colors[ImGuiCol_FrameBgHovered]   = ImVec4(0.20f, 0.22f, 0.29f, 1.00f);
-    colors[ImGuiCol_FrameBgActive]    = ImVec4(0.22f, 0.24f, 0.32f, 1.00f);
-    colors[ImGuiCol_TitleBg]          = ImVec4(0.13f, 0.14f, 0.19f, 1.00f);
-    colors[ImGuiCol_TitleBgActive]    = ImVec4(0.16f, 0.18f, 0.23f, 1.00f);
-    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.13f, 0.14f, 0.19f, 0.75f);
-    colors[ImGuiCol_MenuBarBg]        = ImVec4(0.13f, 0.14f, 0.19f, 1.00f);
+    colors[ImGuiCol_FrameBg]          = ImVec4(0.92f, 0.93f, 0.95f, 1.00f); // #EBEDF0
+    colors[ImGuiCol_FrameBgHovered]   = ImVec4(0.88f, 0.90f, 0.92f, 1.00f);
+    colors[ImGuiCol_FrameBgActive]    = ImVec4(0.84f, 0.86f, 0.89f, 1.00f);
+    colors[ImGuiCol_TitleBg]          = ImVec4(0.90f, 0.91f, 0.93f, 1.00f);
+    colors[ImGuiCol_TitleBgActive]    = ImVec4(0.92f, 0.93f, 0.95f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.90f, 0.91f, 0.93f, 0.75f);
+    colors[ImGuiCol_MenuBarBg]        = ImVec4(0.92f, 0.93f, 0.95f, 1.00f);
 
     // --- Scrollbar ---
-    colors[ImGuiCol_ScrollbarBg]      = ImVec4(0.13f, 0.14f, 0.19f, 1.00f);
-    colors[ImGuiCol_ScrollbarGrab]    = ImVec4(0.22f, 0.24f, 0.32f, 1.00f);
-    colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.27f, 0.29f, 0.39f, 1.00f);
-    colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(0.32f, 0.35f, 0.47f, 1.00f);
+    colors[ImGuiCol_ScrollbarBg]      = ImVec4(0.94f, 0.95f, 0.96f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrab]    = ImVec4(0.75f, 0.77f, 0.80f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.65f, 0.68f, 0.72f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(0.55f, 0.58f, 0.62f, 1.00f);
 
     // --- Check/Radio/Slider ---
-    colors[ImGuiCol_CheckMark]        = ImVec4(0.50f, 0.80f, 1.00f, 1.00f); // blue accent
-    colors[ImGuiCol_SliderGrab]       = ImVec4(0.50f, 0.80f, 1.00f, 0.70f);
-    colors[ImGuiCol_SliderGrabActive] = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
+    colors[ImGuiCol_CheckMark]        = ImVec4(0.20f, 0.60f, 0.95f, 1.00f); // blue accent
+    colors[ImGuiCol_SliderGrab]       = ImVec4(0.20f, 0.60f, 0.95f, 0.70f);
+    colors[ImGuiCol_SliderGrabActive] = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
 
     // --- Buttons ---
-    colors[ImGuiCol_Button]           = ImVec4(0.16f, 0.18f, 0.23f, 1.00f);
-    colors[ImGuiCol_ButtonHovered]    = ImVec4(0.31f, 0.49f, 0.67f, 0.80f); // blue highlight
-    colors[ImGuiCol_ButtonActive]     = ImVec4(0.50f, 0.80f, 1.00f, 1.00f); // blue accent
+    colors[ImGuiCol_Button]           = ImVec4(0.92f, 0.93f, 0.95f, 1.00f);
+    colors[ImGuiCol_ButtonHovered]    = ImVec4(0.45f, 0.75f, 0.95f, 0.80f); // blue highlight
+    colors[ImGuiCol_ButtonActive]     = ImVec4(0.20f, 0.60f, 0.95f, 1.00f); // blue accent
 
     // --- Headers (tree, table, etc) ---
-    colors[ImGuiCol_Header]           = ImVec4(0.20f, 0.22f, 0.29f, 1.00f);
-    colors[ImGuiCol_HeaderHovered]    = ImVec4(0.31f, 0.49f, 0.67f, 0.80f);
-    colors[ImGuiCol_HeaderActive]     = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
+    colors[ImGuiCol_Header]           = ImVec4(0.88f, 0.90f, 0.92f, 1.00f);
+    colors[ImGuiCol_HeaderHovered]    = ImVec4(0.45f, 0.75f, 0.95f, 0.80f);
+    colors[ImGuiCol_HeaderActive]     = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
 
     // --- Tabs ---
-    colors[ImGuiCol_Tab]              = ImVec4(0.16f, 0.18f, 0.23f, 1.00f);
-    colors[ImGuiCol_TabHovered]       = ImVec4(0.31f, 0.49f, 0.67f, 0.80f);
-    colors[ImGuiCol_TabActive]        = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
-    colors[ImGuiCol_TabUnfocused]     = ImVec4(0.13f, 0.14f, 0.19f, 1.00f);
-    colors[ImGuiCol_TabUnfocusedActive]= ImVec4(0.16f, 0.18f, 0.23f, 1.00f);
+    colors[ImGuiCol_Tab]              = ImVec4(0.90f, 0.91f, 0.93f, 1.00f);
+    colors[ImGuiCol_TabHovered]       = ImVec4(0.45f, 0.75f, 0.95f, 0.80f);
+    colors[ImGuiCol_TabActive]        = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
+    colors[ImGuiCol_TabUnfocused]     = ImVec4(0.88f, 0.90f, 0.92f, 1.00f);
+    colors[ImGuiCol_TabUnfocusedActive]= ImVec4(0.90f, 0.91f, 0.93f, 1.00f);
 
     // --- Separators/Resize ---
-    colors[ImGuiCol_Separator]        = ImVec4(0.18f, 0.20f, 0.25f, 0.60f);
-    colors[ImGuiCol_SeparatorHovered] = ImVec4(0.31f, 0.49f, 0.67f, 0.80f);
-    colors[ImGuiCol_SeparatorActive]  = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
-    colors[ImGuiCol_ResizeGrip]       = ImVec4(0.31f, 0.49f, 0.67f, 0.25f);
-    colors[ImGuiCol_ResizeGripHovered]= ImVec4(0.31f, 0.49f, 0.67f, 0.67f);
-    colors[ImGuiCol_ResizeGripActive] = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
+    colors[ImGuiCol_Separator]        = ImVec4(0.75f, 0.77f, 0.80f, 0.60f);
+    colors[ImGuiCol_SeparatorHovered] = ImVec4(0.45f, 0.75f, 0.95f, 0.80f);
+    colors[ImGuiCol_SeparatorActive]  = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
+    colors[ImGuiCol_ResizeGrip]       = ImVec4(0.45f, 0.75f, 0.95f, 0.25f);
+    colors[ImGuiCol_ResizeGripHovered]= ImVec4(0.45f, 0.75f, 0.95f, 0.67f);
+    colors[ImGuiCol_ResizeGripActive] = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
 
     // --- Plots ---
-    colors[ImGuiCol_PlotLines]        = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
-    colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.31f, 0.49f, 0.67f, 1.00f);
-    colors[ImGuiCol_PlotHistogram]    = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
-    colors[ImGuiCol_PlotHistogramHovered]= ImVec4(0.31f, 0.49f, 0.67f, 1.00f);
+    colors[ImGuiCol_PlotLines]        = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
+    colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.45f, 0.75f, 0.95f, 1.00f);
+    colors[ImGuiCol_PlotHistogram]    = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
+    colors[ImGuiCol_PlotHistogramHovered]= ImVec4(0.45f, 0.75f, 0.95f, 1.00f);
 
     // --- Misc ---
-    colors[ImGuiCol_TextSelectedBg]   = ImVec4(0.31f, 0.49f, 0.67f, 0.35f);
-    colors[ImGuiCol_DragDropTarget]   = ImVec4(0.50f, 0.80f, 1.00f, 0.90f);
-    colors[ImGuiCol_NavHighlight]     = ImVec4(0.50f, 0.80f, 1.00f, 1.00f);
-    colors[ImGuiCol_NavWindowingHighlight] = ImVec4(0.50f, 0.80f, 1.00f, 0.70f);
-    colors[ImGuiCol_NavWindowingDimBg]= ImVec4(0.09f, 0.10f, 0.13f, 0.20f);
-    colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.09f, 0.10f, 0.13f, 0.35f);
+    colors[ImGuiCol_TextSelectedBg]   = ImVec4(0.45f, 0.75f, 0.95f, 0.35f);
+    colors[ImGuiCol_DragDropTarget]   = ImVec4(0.20f, 0.60f, 0.95f, 0.90f);
+    colors[ImGuiCol_NavHighlight]     = ImVec4(0.20f, 0.60f, 0.95f, 1.00f);
+    colors[ImGuiCol_NavWindowingHighlight] = ImVec4(0.20f, 0.60f, 0.95f, 0.70f);
+    colors[ImGuiCol_NavWindowingDimBg]= ImVec4(0.96f, 0.96f, 0.97f, 0.20f);
+    colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.96f, 0.96f, 0.97f, 0.35f);
 
     // --- Style tweaks for a modern look ---
     style.WindowRounding    = 6.0f;
@@ -199,6 +197,52 @@ void UIManager::Update()
         ImGui::Text("Min Delta (10s): %.4f s", minDelta);
         ImGui::Text("Max Delta (10s): %.4f s", maxDelta);
 
+
+        ImGui::SeparatorText("Camera");
+        Renderer* _renderer = Renderer::GetInstancePtr(); 
+        Camera* currentCamera = _renderer->GetCamera();
+        if (currentCamera) {
+            // Camera position
+            float cameraPos[3] = {currentCamera->GetPosition().x,
+                                  currentCamera->GetPosition().y,
+                                  currentCamera->GetPosition().z};
+            if (ImGui::DragFloat3("Position", cameraPos, 0.1f)) {
+                currentCamera->SetPosition(glm::vec3(cameraPos[0], cameraPos[1], cameraPos[2]));
+            }
+
+            // Camera rotation using up and right vectors
+            float up[3] = {currentCamera->GetUp().x,
+                           currentCamera->GetUp().y,
+                           currentCamera->GetUp().z};
+            if (ImGui::DragFloat3("Up", up, 0.1f)) {
+                currentCamera->SetUp(glm::vec3(up[0], up[1], up[2]));
+            }
+
+            float right[3] = {currentCamera->GetRight().x,
+                              currentCamera->GetRight().y,
+                              currentCamera->GetRight().z};
+            if (ImGui::DragFloat3("Right", right, 0.1f)) {
+                currentCamera->SetRight(glm::vec3(right[0], right[1], right[2]));
+            }
+        
+
+            // Camera field of view
+            float fov = currentCamera->GetFov();
+            if (ImGui::DragFloat("FOV", &fov, 0.1f, 1.0f, 179.0f)) {
+                currentCamera->SetFov(fov);
+            }
+            // Camera near and far planes
+            float nearPlane = currentCamera->GetNear();
+            float farPlane = currentCamera->GetFar();
+
+            if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.01f, farPlane - 0.01f)) {
+                currentCamera->SetNear(nearPlane);
+            }
+
+            if (ImGui::DragFloat("Far Plane", &farPlane, 0.1f, nearPlane + 0.01f, 10000.0f)) {
+                currentCamera->SetFar(farPlane);
+            }
+        }
 
 
         DrawHierarchyPanel();

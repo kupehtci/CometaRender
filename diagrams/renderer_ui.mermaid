@@ -1,0 +1,40 @@
+classDiagram
+    direction TB
+
+    class Renderer{
+        - _renderables : vector<Renderable>
+        - _pointLights : vector<PointLight>
+        - directionalLight : DirectionalLight
+    }
+
+    class Renderable{
+        - _mesh : Mesh
+        - _material : Material
+    }
+
+
+    class PointLight{
+        - diffuse : vec3
+        - ambient : vec3
+        - specular : vec3
+        - linear : float
+        - constant : float
+        - quadratic : float
+    }
+
+    class DirectionalLight{
+        - direction : vec3
+        - diffuse : vec3
+        - ambient : vec3
+        - specular : vec3
+    }
+
+    class UIManager{
+        ...
+    }
+
+    Renderer <-- DirectionalLight
+    Renderer <-- PointLight
+    Renderer <-- Renderable
+    Renderer <--> UIManager
+

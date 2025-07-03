@@ -65,6 +65,27 @@ public:
     [[nodiscard]] glm::mat4 GetViewMatrix() { return _viewMatrix;  }
     [[nodiscard]] glm::mat4 GetViewProyection() { return _projectionMatrix * _viewMatrix; }
 
+    // --------- SETTERS ---------
+public:
+    void SetPosition(glm::vec3 position) { _position = position; }
+    void SetDirection(glm::vec3 direction) { _direction = direction; }
+    void SetUp(glm::vec3 up) { _up = up; }
+    void SetRight(glm::vec3 right) { _right = right; }
+
+    void SetNear(float near) { _near = near; }
+    void SetFar(float far) { _far = far; }
+    void SetFov(float fov) { _fov = fov; }
+
+    /**
+    * not recomendable to use
+    */
+    void SetProyectionMatrix(glm::mat4 projectionMatrix) { _projectionMatrix = projectionMatrix; }
+
+    /**
+    * not recomendable to use
+    */
+    void SetViewMatrix(glm::mat4 viewMatrix) { _viewMatrix = viewMatrix; }
+
 };
 
 

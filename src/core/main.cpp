@@ -132,13 +132,13 @@ int main() {
     Transform* leftWall = new Transform();
     leftWall->position = glm::vec3(-halfWall, halfWall - 1.0f, -5.0f);
     leftWall->scale = glm::vec3(wallSize, wallSize, wallSize);
-    leftWall->rotation = glm::vec3(0.0f, -90.0f, 90.0f);
+    leftWall->rotation = glm::vec3(180.0f, 90.0f, 90.0f);
     _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, leftWall);
     // Right
     Transform* rightWall = new Transform();
     rightWall->position = glm::vec3(halfWall, halfWall - 1.0f, -5.0f);
     rightWall->scale = glm::vec3(wallSize, wallSize, wallSize);
-    rightWall->rotation = glm::vec3(0.0f, -90.0f, -90.0f);
+    rightWall->rotation = glm::vec3(180.0f, -90.0f, -90.0f);
     _renderer->CreateRenderable(Mesh::CreatePlane(), floorMaterial, rightWall);
     // Front
     Transform* frontWall = new Transform();
